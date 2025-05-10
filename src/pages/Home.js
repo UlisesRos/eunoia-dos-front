@@ -12,6 +12,7 @@ const Home = () => {
                     fontSize={['65px', '70px', '100px']}
                     letterSpacing="wide"
                     color="brand.secondary"
+                    textShadow="0 0 5px #6A8677, 0 0 10px #8fa99b, 0 0 20px #a7c3b3"
                     >EUNONIA</Heading>
                 <Heading
                     fontFamily="'Playfair Display', serif"
@@ -20,6 +21,7 @@ const Home = () => {
                     letterSpacing="widest"
                     textTransform="uppercase"
                     color="brand.secondary"
+                    textShadow="0 0 5px #6A8677, 0 0 10px #8fa99b, 0 0 20px #a7c3b3"
                     >Estudio</Heading>
             </Box>
         </Flex>

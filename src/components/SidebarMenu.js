@@ -11,9 +11,11 @@ import {
     useDisclosure,
     useBreakpointValue,
     Flex,
+    Image
 } from '@chakra-ui/react';
 import { HamburgerIcon, CloseIcon } from '@chakra-ui/icons';
 import { useNavigate } from 'react-router-dom';
+import logo from '../img/logos/faviconE.png';
 
 const SidebarMenu = () => {
     const { isOpen, onOpen, onClose } = useDisclosure();
@@ -21,18 +23,35 @@ const SidebarMenu = () => {
     const isMobile = useBreakpointValue({ base: true, md: false });
 
     const MenuContent = () => (
-        <VStack spacing={4} align="stretch">
-            <Button 
-                onClick={() => { navigate('/login'); onClose(); }}
-                >
-                Iniciar sesión
-            </Button>
-            <Button 
-                onClick={() => { navigate('/register'); onClose(); }}
-                >
-                Registrarse
-            </Button>
-        </VStack>
+        <Flex
+            flexDir='column'
+            justifyContent='space-between'
+            h='full'
+            >
+            <VStack spacing={4} align="stretch">
+                <Button 
+                    onClick={() => { navigate('/login'); onClose(); }}
+                    >
+                    Iniciar sesión
+                </Button>
+                <Button 
+                    onClick={() => { navigate('/register'); onClose(); }}
+                    >
+                    Registrarse
+                </Button>
+            </VStack>
+            <Image
+                alignSelf='center'
+                src={logo}
+                objectFit='cover'
+                alt="Logo Eudonia"
+                borderRadius='full'
+                onClick={() => navigate('/')}
+                cursor='pointer'
+                w={['200px', '150px','120px']}
+                mb={[3,3,0]}
+                />
+        </Flex>
     );
 
     if (isMobile) {
