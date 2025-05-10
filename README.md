@@ -24,3 +24,43 @@ Se creó un tema personalizado (theme.js) con:
 
 - Diseño mobile-first
 Componentes adaptados para una experiencia óptima en celular, especialmente el menú lateral y botones.
+
+# 1. Frontend - Registro y Login
+- Página de Registro (RegisterPage)
+Se creó un formulario de registro con los siguientes campos:
+
+Nombre
+
+Apellido
+
+Email
+
+Celular
+
+Días Semanales (opciones: 1, 2 o 3 veces por semana)
+
+Contraseña
+
+Confirmar Contraseña
+
+Validación básica para asegurarse de que los campos no estén vacíos.
+
+El formulario es completamente responsivo para adaptarse a dispositivos móviles.
+
+Se agregó un botón que redirige al Home desde la página de registro.
+
+- Página de Login (LoginPage)
+Se creó un formulario de inicio de sesión con los siguientes campos:
+
+Email
+
+Contraseña
+
+Validación básica para verificar que los campos no estén vacíos.
+
+El formulario es responsivo para que se vea correctamente en dispositivos móviles.
+
+Se agregó un botón para volver al inicio desde la página de login.
+
+# 2. Estructura Responsiva
+Los formularios de registro y login se centraron vertical y horizontalmente utilizando Flex de Chakra UI, asegurando que se vean bien en todas las resoluciones de pantalla, especialmente en dispositivos móviles.
