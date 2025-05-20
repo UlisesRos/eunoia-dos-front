@@ -48,7 +48,7 @@ const SidebarMenu = () => {
                 borderRadius='full'
                 onClick={() => navigate('/')}
                 cursor='pointer'
-                w={['200px', '150px','120px']}
+                w={['180px', '150px','120px']}
                 mb={[3,3,0]}
                 />
         </Flex>

@@ -1,4 +1,3 @@
-// src/pages/LoginPage.jsx
 import {
     Box,
     Button,
@@ -13,7 +12,9 @@ import {
 } from '@chakra-ui/react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import logo from '../img/logos/logoE.png';
+import { useAuth } from '../context/AuthContext'; 
 
 const Login = () => {
     const [formData, setFormData] = useState({
@@ -23,13 +24,14 @@ const Login = () => {
 
     const toast = useToast();
     const navigate = useNavigate();
+    const { login } = useAuth(); // Funcion de login del context
 
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
         if (!formData.email || !formData.password) {
@@ -43,13 +45,34 @@ const Login = () => {
             return;
         }
 
-        // Aquí se enviarán los datos al backend con fetch o axios
-        console.log('Datos para login:', formData);
+        try {
+            const res = await axios.post('http://localhost:5000/api/auth/login', formData);
+
+            // Guardamos el usuario y token con el context
+            login(res.data.user, res.data.token);
+
+            toast({
+                title: 'Bienvenido/a a Eunoia',
+                description: `Hola ${res.data.user.nombre.charAt(0).toUpperCase()}${res.data.user.nombre.slice(1).toLowerCase()}`,
+                status: 'success',
+                duration: 3000,
+                isClosable: true,
+            });
+
+            navigate('/calendario');
+        } catch (error) {
+            toast({
+                title: 'Error',
+                description: error.response?.data?.message || 'Ocurrió un error al iniciar sesión.',
+                status: 'error',
+                duration: 3000,
+                isClosable: true,
+            });
+        }
     };
 
     return (
-        <Flex minH="100vh" flexDir='column' align='center' justify={['start', 'start', 'center']} >
-
+        <Flex minH="100vh" flexDir='column' align='center' justify={['start', 'start', 'center']}>
             <Image 
                 src={logo}
                 objectFit='cover'
@@ -59,7 +82,7 @@ const Login = () => {
                 mb={2}
                 onClick={() => navigate('/')}
                 cursor='pointer'
-                />
+            />
             <Box 
                 maxW='md' 
                 w="full" 
@@ -68,27 +91,27 @@ const Login = () => {
                 p={5} 
                 boxShadow={['none','none',"0px 10px 15px rgba(0, 0, 0, 0.2), 0px 4px 6px rgba(0, 0, 0, 0.1)" ]}
                 borderRadius="md"
-                >
+            >
                 <Heading mb={6} textAlign="center" color='brand.primary'>Iniciar Sesión</Heading>
                 <form onSubmit={handleSubmit}>
                     <VStack spacing={4}>
                         <FormControl isRequired>
                             <FormLabel>Email</FormLabel>
                             <Input
-                            type="email"
-                            name="email"
-                            border='1px solid #6A8677'
-                            onChange={handleChange}
+                                type="email"
+                                name="email"
+                                border='1px solid #6A8677'
+                                onChange={handleChange}
                             />
                         </FormControl>
 
                         <FormControl isRequired>
                             <FormLabel>Contraseña</FormLabel>
                             <Input
-                            type="password"
-                            name="password"
-                            border='1px solid #6A8677'
-                            onChange={handleChange}
+                                type="password"
+                                name="password"
+                                border='1px solid #6A8677'
+                                onChange={handleChange}
                             />
                         </FormControl>
 
@@ -107,4 +130,3 @@ const Login = () => {
 };
 
 export default Login;
-

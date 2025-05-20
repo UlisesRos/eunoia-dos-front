@@ -1,4 +1,3 @@
-// src/pages/RegisterPage.jsx
 import {
     Box,
     Button,
@@ -14,6 +13,7 @@ import {
 } from '@chakra-ui/react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import logo from '../img/logos/logoE.png';
 
 const Register = () => {
@@ -24,7 +24,7 @@ const Register = () => {
         celular: '',
         diasSemanales: '',
         password: '',
-        confirmPassword: '',
+        confirmarPassword: '',
     });
 
     const toast = useToast();
@@ -35,10 +35,10 @@ const Register = () => {
         setFormData(prev => ({ ...prev, [name]: value }));
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (formData.password !== formData.confirmPassword) {
+        if (formData.password !== formData.confirmarPassword) {
         toast({
             title: 'Error',
             description: 'Las contraseñas no coinciden.',
@@ -49,8 +49,38 @@ const Register = () => {
         return;
         }
 
-    // Aquí se enviarán los datos al backend con fetch o axios
-    console.log('Datos del formulario:', formData);
+    const dataToSend = {
+        ...formData,
+        diasSemanales: Number(formData.diasSemanales),
+    };
+
+    console.log(dataToSend);
+
+    try {
+        // Realizar la solicitud POST al backend
+        const response = await axios.post('http://localhost:5000/api/auth/register', dataToSend);
+
+        // Manejar la respuesta del backend
+        if (response.status === 201) {
+            toast({
+                title: 'Registro exitoso',
+                description: 'Te has registrado correctamente.',
+                status: 'success',
+                duration: 3000,
+                isClosable: true,
+            });
+            navigate('/login'); // Redirigir al login.
+        }
+    } catch (error) {
+        toast({
+            title: 'Error',
+            description: error.response?.data?.message || 'Error al registrar.',
+            status: 'error',
+            duration: 3000,
+            isClosable: true
+        })
+    }
+
     };
 
     return (
@@ -94,7 +124,7 @@ const Register = () => {
 
                         <FormControl isRequired>
                             <FormLabel>Celular</FormLabel>
-                            <Input type="tel" name="celular" border='1px solid #6A8677' onChange={handleChange} />
+                            <Input type="tel" name="celular" border='1px solid #6A8677' onChange={handleChange} inputMode='numeric' pattern='[0-9]*' />
                         </FormControl>
 
                         <FormControl isRequired>
@@ -113,7 +143,7 @@ const Register = () => {
 
                         <FormControl isRequired>
                             <FormLabel>Confirmar contraseña</FormLabel>
-                            <Input type="password" name="confirmPassword" border='1px solid #6A8677' onChange={handleChange} />
+                            <Input type="password" name="confirmarPassword" border='1px solid #6A8677' onChange={handleChange} />
                         </FormControl>
 
                         <Button type="submit" width="full">
