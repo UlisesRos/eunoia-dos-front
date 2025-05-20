@@ -1,66 +1,58 @@
-# Calendario Pilates - Documentación Inicial
+# 🧘‍♀️ App de Gestión de Horarios de Pilates
 
-📌 Estructura del proyecto
-Aplicación web desarrollada con React y Chakra UI, orientada a la gestión de turnos mensuales para un estudio de pilates. Por el momento se implementaron las siguientes funcionalidades y estructuras base:
+Esta es una aplicación web diseñada para que los usuarios puedan **registrarse, iniciar sesión y seleccionar sus días y horarios de entrenamiento** de manera organizada y limitada.
 
-✅ Funcionalidades implementadas
-- Pantalla Home
-Página principal accesible al iniciar la app. Incluye bienvenida y opciones de navegación inicial.
+---
 
-- SidebarMenu responsivo
-Menú lateral adaptado para desktop y versión móvil, con Drawer y botón de cierre en mobile. Contiene accesos rápidos a Login y Registro.
+## 🚀 Funcionalidades principales
 
-- Ruteo con React Router
-Navegación entre páginas usando react-router-dom. Se configuraron rutas base como /, /login, y /register.
+- ✅ **Registro e inicio de sesión** con autenticación segura (JWT).
+- ✅ Cada usuario tiene una cantidad de días semanales asignados (`diasSemanales`).
+- ✅ Visualización del **calendario semanal** con días de lunes a viernes y horarios por turno.
+- ✅ Modal para seleccionar horarios con:
+  - Cupo limitado por turno (7 personas máximo).
+  - Restricción: **solo un horario por día**.
+  - Límite de **2 cambios por mes** para modificar los horarios.
+- ✅ Panel responsive optimizado para **móvil y escritorio**.
+- ✅ Reinicio automático del calendario cada sábado (back configurado).
+- ✅ Vista clara de turnos ocupados y seleccionados.
+- ✅ Estilos personalizados con Chakra UI.
 
-- Tematización con Chakra UI
-Se creó un tema personalizado (theme.js) con:
+---
 
-    - Colores primarios y secundarios
+## 📦 Tecnologías utilizadas
 
-    - Tipografías personalizadas (Poppins para headings y Roboto para texto)
+- **Frontend**: React + Chakra UI
+- **Backend**: Node.js + Express
+- **Base de datos**: MongoDB (Mongoose)
+- **Autenticación**: JSON Web Tokens (JWT)
 
-    - Estilo global para los botones (Button) con hover y transición
+---
 
-- Diseño mobile-first
-Componentes adaptados para una experiencia óptima en celular, especialmente el menú lateral y botones.
+## 🔐 Estructura general
 
-# 1. Frontend - Registro y Login
-- Página de Registro (RegisterPage)
-Se creó un formulario de registro con los siguientes campos:
+- `LoginPage`: permite a los usuarios autenticarse.
+- `RegisterPage`: formulario de registro.
+- `CalendarioPage`: panel principal del usuario con el calendario.
+- `SelectDaysModal`: modal donde el usuario elige y modifica sus horarios disponibles.
+- `CalendarGrid`, `DayColumn`, `TimeSlot`: estructura modular del calendario.
+- `calendarController.js`: lógica del backend para asignar turnos con validaciones.
+- `UserSelection`: modelo que guarda las selecciones de cada usuario.
 
-Nombre
+---
 
-Apellido
+## 📱 Responsive
 
-Email
+La app está completamente adaptada a dispositivos móviles:
+- Los horarios se muestran en vertical en pantallas pequeñas.
+- Todo el contenido se ajusta al ancho sin scroll lateral.
 
-Celular
+---
 
-Días Semanales (opciones: 1, 2 o 3 veces por semana)
+## 🧠 Reglas de negocio importantes
 
-Contraseña
-
-Confirmar Contraseña
-
-Validación básica para asegurarse de que los campos no estén vacíos.
-
-El formulario es completamente responsivo para adaptarse a dispositivos móviles.
-
-Se agregó un botón que redirige al Home desde la página de registro.
-
-- Página de Login (LoginPage)
-Se creó un formulario de inicio de sesión con los siguientes campos:
-
-Email
-
-Contraseña
-
-Validación básica para verificar que los campos no estén vacíos.
-
-El formulario es responsivo para que se vea correctamente en dispositivos móviles.
-
-Se agregó un botón para volver al inicio desde la página de login.
-
-# 2. Estructura Responsiva
-Los formularios de registro y login se centraron vertical y horizontalmente utilizando Flex de Chakra UI, asegurando que se vean bien en todas las resoluciones de pantalla, especialmente en dispositivos móviles.
+- Cada usuario puede elegir hasta su `diasSemanales`.
+- No se puede seleccionar más de un horario en el mismo día.
+- Máximo 2 cambios por mes, controlados automáticamente.
+- Cada horario permite hasta 7 personas.
+"""
