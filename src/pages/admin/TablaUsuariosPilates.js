@@ -230,13 +230,16 @@ const TablaUsuariosPilates = () => {
                           </Box>
                         </PopoverTrigger>
                         <PopoverContent
-                          bg="gray.700" 
-                          color="white" 
+                          bg="gray.700"
+                          color="white"
                           whiteSpace="pre-line"
-                          width="fit-content"
-                          minWidth="200px"
-                          maxWidth="90vw" 
-                          px={4} py={2}
+                          width="auto"
+                          minW="200px"
+                          maxW="95vw"
+                          px={4}
+                          py={2}
+                          overflowWrap="break-word"
+                          wordBreak="break-word"
                           >
                           <PopoverArrow />
                           <PopoverBody whiteSpace="pre-line" >
