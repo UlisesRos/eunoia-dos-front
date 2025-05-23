@@ -1,29 +1,19 @@
-import { Grid, Box, Stack } from '@chakra-ui/react';
+import { Grid, Box } from '@chakra-ui/react';
 import DayColumn from './DayColumn';
 
 const CalendarGrid = ({ weekDates, turnos }) => {
     return (
-        <Box>
-            {/* Stack en móvil, Grid en desktop */}
-            <Box display={{ base: 'block', md: 'none' }}>
-                <Stack spacing={4}>
-                {weekDates.map(({ dayName, date }, index) => (
-                    <DayColumn key={index} dayName={dayName} date={date} turnos={turnos} />
-                ))}
-                </Stack>
-            </Box>
-
-            <Box display={{ base: 'none', md: 'block' }} overflowX="unset">
-                <Grid
-                templateColumns="repeat(5, 1fr)"
+        <Box overflowX="auto">
+            <Grid
+                templateColumns={{ base: '1fr', md: 'repeat(5, 1fr)' }}
                 gap={4}
-                overflowX="auto"
-                >
+                minW={{ base: '100%', md: '768px' }} // asegura el layout correcto en desktop
+                px={2} // un poco de padding horizontal
+            >
                 {weekDates.map(({ dayName, date }, index) => (
-                    <DayColumn key={index} dayName={dayName} date={date} turnos={turnos} />
+                <DayColumn key={index} dayName={dayName} date={date} turnos={turnos} />
                 ))}
-                </Grid>
-            </Box>
+            </Grid> 
         </Box>
     );
 };
