@@ -9,12 +9,18 @@ import {
     VStack,
     useToast,
     Image,
-    Flex
+    Flex,
+    InputGroup,
+    InputRightElement,
+    IconButton,
+    Spinner
 } from '@chakra-ui/react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import logo from '../img/logos/logoE.png';
+import backendUrl from '../config';
+import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 
 const Register = () => {
     const [formData, setFormData] = useState({
@@ -26,6 +32,8 @@ const Register = () => {
         password: '',
         confirmarPassword: '',
     });
+    const [ loading, setLoading ] = useState(false); // Estado para controlar el loading
+    const [ showPassword, setShowPassword ] = useState(false);
 
     const toast = useToast();
     const navigate = useNavigate();
@@ -37,6 +45,7 @@ const Register = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setLoading(true); // Activar el estado de loading
 
         if (formData.password !== formData.confirmarPassword) {
         toast({
@@ -49,38 +58,43 @@ const Register = () => {
         return;
         }
 
-    const dataToSend = {
-        ...formData,
-        diasSemanales: Number(formData.diasSemanales),
+        const dataToSend = {
+            ...formData,
+            diasSemanales: Number(formData.diasSemanales),
+        };
+
+        console.log(dataToSend);
+
+        try {
+            // Realizar la solicitud POST al backend
+            const response = await axios.post(`${backendUrl}/api/auth/register`, dataToSend);
+
+            // Manejar la respuesta del backend
+            if (response.status === 201) {
+                toast({
+                    title: 'Registro exitoso',
+                    description: 'Te has registrado correctamente.',
+                    status: 'success',
+                    duration: 3000,
+                    isClosable: true,
+                });
+                navigate('/login'); // Redirigir al login.
+            }
+        } catch (error) {
+            toast({
+                title: 'Error',
+                description: error.response?.data?.message || 'Error al registrar.',
+                status: 'error',
+                duration: 3000,
+                isClosable: true
+            })
+        } finally {
+            setLoading(false); // Desactivar el estado de loading
+        }
     };
 
-    console.log(dataToSend);
-
-    try {
-        // Realizar la solicitud POST al backend
-        const response = await axios.post('http://localhost:5000/api/auth/register', dataToSend);
-
-        // Manejar la respuesta del backend
-        if (response.status === 201) {
-            toast({
-                title: 'Registro exitoso',
-                description: 'Te has registrado correctamente.',
-                status: 'success',
-                duration: 3000,
-                isClosable: true,
-            });
-            navigate('/login'); // Redirigir al login.
-        }
-    } catch (error) {
-        toast({
-            title: 'Error',
-            description: error.response?.data?.message || 'Error al registrar.',
-            status: 'error',
-            duration: 3000,
-            isClosable: true
-        })
-    }
-
+    const togglePasswordVisibility = () => {
+        setShowPassword(!showPassword);
     };
 
     return (
@@ -138,16 +152,41 @@ const Register = () => {
 
                         <FormControl isRequired>
                             <FormLabel>Contraseña</FormLabel>
-                            <Input type="password" name="password" border='1px solid #6A8677' onChange={handleChange} />
+                            <InputGroup>
+                                <Input type={showPassword ? 'text' : 'password'} name="password" border='1px solid #6A8677' onChange={handleChange} />
+                                <InputRightElement>
+                                    <IconButton
+                                        aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+                                        icon={showPassword ? <ViewOffIcon /> : <ViewIcon />}
+                                        onClick={togglePasswordVisibility}
+                                        variant="ghost"
+                                        size="sm"
+                                    />
+                                </InputRightElement>
+                            </InputGroup>
                         </FormControl>
 
                         <FormControl isRequired>
                             <FormLabel>Confirmar contraseña</FormLabel>
-                            <Input type="password" name="confirmarPassword" border='1px solid #6A8677' onChange={handleChange} />
+                            <InputGroup>
+                                <Input type={showPassword ? 'text' : 'password'} name="confirmarPassword" border='1px solid #6A8677' onChange={handleChange} />
+                                <InputRightElement>
+                                    <IconButton
+                                        aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+                                        icon={showPassword ? <ViewOffIcon /> : <ViewIcon />}
+                                        onClick={togglePasswordVisibility}
+                                        variant="ghost"
+                                        size="sm"
+                                    />
+                                </InputRightElement>
+                            </InputGroup>
                         </FormControl>
 
-                        <Button type="submit" width="full">
-                            Registrarse
+                        <Button type="submit" width="full" 
+                            isLoading={loading}
+                            spinner={<Spinner size='sm' />} 
+                            >
+                            {loading ? '' : 'Registrarse'}
                         </Button>
                         <Button onClick={() => navigate('/')} width="full">
                             Volver al Inicio

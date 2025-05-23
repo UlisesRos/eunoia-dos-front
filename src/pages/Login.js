@@ -8,19 +8,29 @@ import {
     VStack,
     useToast,
     Flex,
-    Image
+    Image,
+    Link,
+    InputGroup,
+    InputRightElement,
+    IconButton,
+    Spinner
 } from '@chakra-ui/react';
+import { Link as RouterLink } from 'react-router-dom';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import logo from '../img/logos/logoE.png';
-import { useAuth } from '../context/AuthContext'; 
+import { useAuth } from '../context/AuthContext';
+import backendUrl from '../config';
+import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 
 const Login = () => {
     const [formData, setFormData] = useState({
         email: '',
         password: '',
     });
+    const [ showPassword, setShowPassword ] = useState(false);
+    const [loading, setLoading] = useState(false); // Estado para controlar el loading
 
     const toast = useToast();
     const navigate = useNavigate();
@@ -33,6 +43,7 @@ const Login = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setLoading(true); // Activar el estado de loading
 
         if (!formData.email || !formData.password) {
             toast({
@@ -46,7 +57,7 @@ const Login = () => {
         }
 
         try {
-            const res = await axios.post('http://localhost:5000/api/auth/login', formData);
+            const res = await axios.post(`${backendUrl}/api/auth/login`, formData);
 
             // Guardamos el usuario y token con el context
             login(res.data.user, res.data.token);
@@ -68,7 +79,13 @@ const Login = () => {
                 duration: 3000,
                 isClosable: true,
             });
+        } finally {
+            setLoading(false); // Desactivar el estado de loading
         }
+    };
+
+    const togglePasswordVisibility = () => {
+        setShowPassword(!showPassword);
     };
 
     return (
@@ -107,16 +124,34 @@ const Login = () => {
 
                         <FormControl isRequired>
                             <FormLabel>Contraseña</FormLabel>
-                            <Input
-                                type="password"
-                                name="password"
-                                border='1px solid #6A8677'
-                                onChange={handleChange}
-                            />
+                            <InputGroup>
+                                <Input
+                                    type={showPassword ? 'text' : 'password'}
+                                    name="password"
+                                    border='1px solid #6A8677'
+                                    onChange={handleChange}
+                                />
+                                <InputRightElement>
+                                    <IconButton
+                                        aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+                                        icon={showPassword ? <ViewOffIcon /> : <ViewIcon />}
+                                        onClick={togglePasswordVisibility}
+                                        variant="ghost"
+                                        size="sm"
+                                    />
+                                </InputRightElement>  
+                            </InputGroup>
                         </FormControl>
 
-                        <Button type="submit" colorScheme="teal" width="full">
-                            Ingresar
+                        <Link as={RouterLink} to="/olvide-contrasena" color='brand.primary'>
+                            ¿Olvidaste tu contraseña?
+                        </Link>
+
+                        <Button type="submit" colorScheme="teal" width="full"
+                            isLoading={loading}
+                            spinner={<Spinner size='sm' />} 
+                            >
+                            {loading ? '' : 'Ingresar'}
                         </Button>
 
                         <Button onClick={() => navigate('/')} width="full">

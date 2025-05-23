@@ -9,6 +9,8 @@ const TimeSlot = ({ hora, usersInSlot = [] }) => {
         lugares.push(null);
     }
 
+    console.log('Lugares:', lugares);
+
     return (
         <Box
             borderWidth="1px"

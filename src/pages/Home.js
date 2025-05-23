@@ -11,7 +11,7 @@ const Home = () => {
                     fontFamily="'Playfair Display', serif"
                     fontWeight="700"
                     fontSize={['65px', '70px', '100px']}
-                    letterSpacing="wide"
+                    letterSpacing="15px"
                     color="brand.secondary"
                     textShadow="0 0 5px #6A8677, 0 0 10px #8fa99b, 0 0 20px #a7c3b3"
                     >EUNOIA</Heading>

@@ -1,6 +1,7 @@
 import axios from 'axios';
+import backendUrl from '../config';
 
-const API_URL = 'http://localhost:5000/api/calendar';
+const API_URL = `${backendUrl}/api/calendar`;
 
 // Esta función siempre obtiene el token actual
 const getAuthHeaders = () => ({

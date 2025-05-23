@@ -20,7 +20,7 @@ const WeekSelector = ({ currentWeek, onWeekChange, availableWeeks }) => {
                 color={currentWeek === week ? "brand.primary" : "brand.secondary"}
                 w={{ base: 'full', sm: 'auto' }}
                 >
-                Semana {week}
+                    Semana {week}
                 </Button>
             ))}
         </Stack>
