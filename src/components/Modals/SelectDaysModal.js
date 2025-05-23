@@ -12,7 +12,8 @@ import {
     CheckboxGroup,
     VStack,
     useToast,
-    Box
+    Box,
+    Spinner
 } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import { setUserSelections } from '../../services/calendarAPI';
@@ -45,6 +46,7 @@ import { setUserSelections } from '../../services/calendarAPI';
         }) {
         const toast = useToast();
         const [selectedKeys, setSelectedKeys] = useState(new Set());
+        const [loading, setLoading] = useState(false); // Estado para controlar el loading
 
         const turnosCompletos = new Set(
             turnosOcupados.filter(t => t.users.length >= 7).map(t => toKey(t.day, t.hour))
@@ -77,36 +79,40 @@ import { setUserSelections } from '../../services/calendarAPI';
         };
 
         const handleSave = async () => {
+            setLoading(true); // Activar el estado de loading
             const selections = Array.from(selectedKeys).map(fromKey);
             if (cambiosRestantes <= 0) {
-            toast({
-                title: 'Límite alcanzado',
-                description: 'Ya alcanzaste el máximo de 2 cambios este mes.',
-                status: 'info',
-                duration: 3000,
-                isClosable: true,
-            });
-            return;
+                toast({
+                    title: 'Límite alcanzado',
+                    description: 'Ya alcanzaste el máximo de 2 cambios este mes.',
+                    status: 'info',
+                    duration: 3000,
+                    isClosable: true,
+                });
+                return; 
             }
+
             try {
-            await setUserSelections(selections);
-            toast({
-                title: 'Guardado',
-                description: 'Tus días fueron actualizados.',
-                status: 'success',
-                duration: 3000,
-                isClosable: true,
-            });
-            onClose();
-            onUpdate();
+                await setUserSelections(selections);
+                toast({
+                    title: 'Guardado',
+                    description: 'Tus días fueron actualizados.',
+                    status: 'success',
+                    duration: 3000,
+                    isClosable: true,
+                });
+                onClose();
+                onUpdate();
             } catch (error) {
-            toast({
-                title: 'Error',
-                description: error.response?.data?.message || 'No se pudieron guardar los turnos.',
-                status: 'error',
-                duration: 3000,
-                isClosable: true,
-            });
+                toast({
+                    title: 'Error',
+                    description: error.response?.data?.message || 'No se pudieron guardar los turnos.',
+                    status: 'error',
+                    duration: 3000,
+                    isClosable: true,
+                });
+            } finally {
+                setLoading(false); // Desactivar el estado de loading
             }
         };
 
@@ -164,7 +170,10 @@ import { setUserSelections } from '../../services/calendarAPI';
                 </ModalBody>
                 <ModalFooter>
                 <Button mr={3} onClick={onClose}>Cancelar</Button>
-                <Button colorScheme="teal" onClick={handleSave}>Guardar</Button>
+                <Button colorScheme="teal" onClick={handleSave}
+                    isLoading={loading}
+                    spinner={<Spinner size='sm' />} 
+                    >{loading ? '' : 'Guardar'}</Button>
                 </ModalFooter>
             </ModalContent>
             </Modal>
