@@ -223,7 +223,7 @@ const TablaUsuariosPilates = () => {
                   <Tr key={user._id} fontSize={fontSize}>
                     <Td>{index + 1}</Td>
                     <Td>
-                      <Popover trigger="click" placement="top">
+                      <Popover trigger="click" placement="bottom">
                         <PopoverTrigger>
                           <Box as="span" cursor="pointer" fontWeight="bold">
                             {user.nombre}
