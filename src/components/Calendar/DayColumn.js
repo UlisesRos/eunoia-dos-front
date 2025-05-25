@@ -3,7 +3,7 @@ import TimeSlot from './TimeSlot';
 import { horariosPorDia } from '../../utils/horarios';
 
 const DayColumn = ({ dayName, date, turnos }) => {
-    const horarios = horariosPorDia[dayName.toLowerCase()] || [];
+    const horarios = typeof dayName === 'string' ? horariosPorDia[dayName.toLowerCase()] || [] : [];
 
     return (
         <Box

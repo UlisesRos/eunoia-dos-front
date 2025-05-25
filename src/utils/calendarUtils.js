@@ -17,7 +17,7 @@ export function getWeekDates(month, year, weekNumber) {
         if (day.getMonth() === month) {
             weekDates.push({
                 dayName: ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes'][i],
-                date: day.toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit' }),
+                date: day.toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit', year: 'numeric' }),
             });
         }
     }
@@ -33,7 +33,7 @@ export function getFilteredWeeks(month, year) {
 
         const hasValidDayInMonth = weekDates.some(({ date }) => {
         const [day, monthStr, yearStr] = date.split('/');
-        const dateObj = new Date(`${yearStr}-${monthStr}-${day}`);
+        const dateObj = new Date(Number(yearStr), Number(monthStr) - 1, Number(day));
         const dayOfWeek = dateObj.getDay(); // 0 = domingo, 6 = sábado
         return (
                 dateObj.getMonth() === month &&

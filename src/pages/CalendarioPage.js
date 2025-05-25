@@ -41,9 +41,13 @@ import logo from '../img/logos/faviconE.png';
         const [showSelectModal, setShowSelectModal] = useState(false);
 
         const filteredWeeks = getFilteredWeeks(selectedMonth, selectedYear);
-        const weekData = filteredWeeks.find(week => week.weekNumber === currentWeek);
-        const weekDates = weekData ? weekData.dates || weekData.weekDates : [];
-    ;
+        const weekData = Array.isArray(filteredWeeks) 
+            ? filteredWeeks.find(week => week.weekNumber === currentWeek)
+            : null;
+
+        const weekDates = Array.isArray(weekData?.dates)
+            ? weekData.dates
+            : [];
 
         const { user, logout } = useAuth();
         const navigate = useNavigate();
@@ -115,6 +119,10 @@ import logo from '../img/logos/faviconE.png';
 
             return !user.pago && diaDelMes > 10;
         };
+
+        console.log("📅 weekDates:", weekDates);
+        console.log("👥 turnos:", turnos);
+
 
         if (isLoading) {
         return (

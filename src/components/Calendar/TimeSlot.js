@@ -33,21 +33,21 @@ const TimeSlot = ({ hora, usersInSlot = [] }) => {
                 gap={2}
             >
                 {lugares.map((user, i) => (
-                <Tag
-                    key={i}
-                    colorScheme={user ? 'green' : 'gray'}
-                    textTransform="capitalize"
-                    fontWeight={user ? 'bold' : 'normal'}
-                    fontSize={{ base: 'xs', md: 'sm' }}
-                    px={3}
-                    py={1}
-                    maxW="80px"
-                    whiteSpace="nowrap"
-                    overflow="hidden"
-                    textOverflow="ellipsis"
-                >
-                    {user || 'Libre'}
-                </Tag>
+                    <Tag
+                        key={i}
+                        colorScheme={typeof user === 'string' && user.trim() !== '' ? 'green' : 'gray'}
+                        textTransform="capitalize"
+                        fontWeight={user ? 'bold' : 'normal'}
+                        fontSize={{ base: 'xs', md: 'sm' }}
+                        px={3}
+                        py={1}
+                        maxW="80px"
+                        whiteSpace="nowrap"
+                        overflow="hidden"
+                        textOverflow="ellipsis"
+                        >
+                        {typeof user === 'string' && user.trim() !== '' ? user : 'Libre'}
+                    </Tag>
                 ))}
             </Box>
         </Box>

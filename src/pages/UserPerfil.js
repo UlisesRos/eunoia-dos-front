@@ -12,7 +12,7 @@ const UserPerfil = () => {
         return <Text textAlign="center" mt={10}>Cargando perfil...</Text>;
     }
 
-    const { nombre, apellido, email, diasSemanales, pagado } = user;
+    const { nombre, apellido, email, diasSemanales, pago } = user;
 
     return (
         <Box
@@ -81,8 +81,8 @@ const UserPerfil = () => {
 
                     <Box w="100%">
                         <Text fontWeight="bold">Estado de Pago:</Text>
-                        <Badge colorScheme={pagado ? "green" : "red"}>
-                        {pagado ? "Pagado" : "No Pagado"}
+                        <Badge colorScheme={pago ? "green" : "red"}>
+                        {pago ? "Pagado" : "No Pagado"}
                         </Badge>
                     </Box>
                 </VStack>
