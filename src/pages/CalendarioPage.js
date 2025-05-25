@@ -277,7 +277,13 @@ import logo from '../img/logos/faviconE.png';
                 </Flex>
 
 
-                <CalendarGrid weekDates={weekDates} turnos={turnos} />
+                {weekDates.length === 0 || turnos.length === 0 ? (
+                    <Text color="red.500" fontWeight="bold" textAlign="center" my={4}>
+                        No se pudo cargar el calendario. Por favor, recargá la página o intentá más tarde.
+                    </Text>
+                    ) : (
+                    <CalendarGrid weekDates={weekDates} turnos={turnos} />
+                )}
 
                 {/* Modal para elegir días y horarios */}
                 <SelectDaysModal
