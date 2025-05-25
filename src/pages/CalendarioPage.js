@@ -118,6 +118,7 @@ import logo from '../img/logos/faviconE.png';
 
         console.log("📅 weekDates:", weekDates);
         console.log("👥 turnos:", turnos);
+        console.log('ahora')
 
         if (isLoading) {
         return (
