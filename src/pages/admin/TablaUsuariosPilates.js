@@ -225,9 +225,9 @@ const TablaUsuariosPilates = () => {
                     <Td>
                       <Popover trigger="click" placement="bottom">
                         <PopoverTrigger>
-                          <Box as="span" cursor="pointer" fontWeight="bold">
+                          <Button variant="link" color="white" fontWeight="bold">
                             {user.nombre}
-                          </Box>
+                          </Button>
                         </PopoverTrigger>
                         <PopoverContent
                           bg="gray.700"
@@ -245,7 +245,7 @@ const TablaUsuariosPilates = () => {
                           <PopoverBody whiteSpace="pre-line" >
                             Celular: {user.celular}{"\n"}
                             Días x Semana: {user.diasSemanales} días{"\n"}
-                            Registrado: {new Date(user.fechaRegistro).toLocaleDateString()}
+                            Registrado: {new Date(user.fechaRegistro).toLocaleDateString('es-AR')}
                           </PopoverBody>
                         </PopoverContent>
                       </Popover>
@@ -268,8 +268,7 @@ const TablaUsuariosPilates = () => {
                           onClick={() => handleTogglePago(user._id, user.pago)}
                           userSelect="none"
                         >
-                          <Image w='40px' display={user.pago === true ? 'block' : 'none'} src={pagado} />
-                          <Image w='40px' display={user.pago === false ? 'block' : 'none'} src={noPagado}/>
+                          <Image w='40px' src={user.pago ? pagado : noPagado} />
                         </Box>
                       </Tooltip>
                     </Td>
