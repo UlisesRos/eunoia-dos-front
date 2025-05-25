@@ -3,7 +3,7 @@ import DayColumn from './DayColumn';
 
 const CalendarGrid = ({ weekDates, turnos }) => {
     return (
-        <Box overflowX='scroll'>
+        <Box overflowX="auto">
             <Grid
                 templateColumns={{ base: '1fr', md: 'repeat(5, 1fr)' }}
                 gap={4}
