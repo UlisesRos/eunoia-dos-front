@@ -116,8 +116,6 @@ import logo from '../img/logos/faviconE.png';
             return !user.pago && diaDelMes > 10;
         };
 
-        console.log(turnos)
-
         if (isLoading) {
         return (
             <Box

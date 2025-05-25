@@ -17,8 +17,6 @@ const ResetPasswordFrom = () => {
     const navigate = useNavigate();
     const toast = useToast();
 
-    console.log(token);
-
     const [password, setPassword] = useState('');
     const [confirmarPassword, setConfirmarPassword] = useState('');
     const [loading, setLoading] = useState(false);

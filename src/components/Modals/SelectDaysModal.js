@@ -116,8 +116,6 @@ import { setUserSelections } from '../../services/calendarAPI';
             }
         };
 
-        console.log('Turnos ocupados:', turnosOcupados);
-
         return (
             <Modal isOpen={isOpen} onClose={onClose} size="lg" isCentered>
             <ModalOverlay />

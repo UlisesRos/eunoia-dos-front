@@ -63,8 +63,6 @@ const Register = () => {
             diasSemanales: Number(formData.diasSemanales),
         };
 
-        console.log(dataToSend);
-
         try {
             // Realizar la solicitud POST al backend
             const response = await axios.post(`${backendUrl}/api/auth/register`, dataToSend);
