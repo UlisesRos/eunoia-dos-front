@@ -41,13 +41,9 @@ import logo from '../img/logos/faviconE.png';
         const [showSelectModal, setShowSelectModal] = useState(false);
 
         const filteredWeeks = getFilteredWeeks(selectedMonth, selectedYear);
-        const weekData = Array.isArray(filteredWeeks) 
-            ? filteredWeeks.find(week => week.weekNumber === currentWeek)
-            : null;
-
-        const weekDates = Array.isArray(weekData?.dates)
-            ? weekData.dates
-            : [];
+        const weekData = filteredWeeks.find(week => week.weekNumber === currentWeek);
+        const weekDates = weekData ? weekData.dates || weekData.weekDates : [];
+    ;
 
         const { user, logout } = useAuth();
         const navigate = useNavigate();
@@ -122,7 +118,6 @@ import logo from '../img/logos/faviconE.png';
 
         console.log("📅 weekDates:", weekDates);
         console.log("👥 turnos:", turnos);
-
 
         if (isLoading) {
         return (
@@ -276,10 +271,9 @@ import logo from '../img/logos/faviconE.png';
 
                 </Flex>
 
-
-                {weekDates.length === 0 || turnos.length === 0 ? (
-                    <Text color="red.500" fontWeight="bold" textAlign="center" my={4}>
-                        No se pudo cargar el calendario. Por favor, recargá la página o intentá más tarde.
+                {turnos.length === 0 ? (
+                    <Text textAlign="center" color="red.500" fontWeight="bold">
+                        Cargando turnos o no disponibles en este momento.
                     </Text>
                     ) : (
                     <CalendarGrid weekDates={weekDates} turnos={turnos} />

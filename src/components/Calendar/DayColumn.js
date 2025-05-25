@@ -5,6 +5,16 @@ import { horariosPorDia } from '../../utils/horarios';
 const DayColumn = ({ dayName, date, turnos }) => {
     const horarios = typeof dayName === 'string' ? horariosPorDia[dayName.toLowerCase()] || [] : [];
 
+    if (horarios.length === 0) {
+        return (
+            <Box p={4} borderWidth="1px" borderRadius="md">
+            <Text textAlign="center" fontWeight="bold">
+                No hay horarios definidos para {dayName}
+            </Text>
+            </Box>
+        );
+    }
+
     return (
         <Box
         borderWidth="1px"
@@ -32,10 +42,10 @@ const DayColumn = ({ dayName, date, turnos }) => {
                 w="100%"
             >
                 {horarios.map((hora, idx) => {
-                const turno = turnos.find(t => t.day === dayName && t.hour === hora);
-                return (
-                    <TimeSlot key={idx} hora={hora} usersInSlot={turno?.users || []} />
-                );
+                    const turno = turnos.find(t => t.day === dayName && t.hour === hora);
+                    return (
+                        <TimeSlot key={idx} hora={hora} usersInSlot={turno?.users || []} />
+                    );
                 })}
             </VStack>
         </Box>
