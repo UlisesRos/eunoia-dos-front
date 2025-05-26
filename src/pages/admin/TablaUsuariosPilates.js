@@ -20,7 +20,8 @@ import {
   Button,
   useDisclosure,
   Tooltip,
-  Input
+  Input,
+  Portal
 } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import logo from '../../img/logos/faviconE.png';
@@ -222,32 +223,34 @@ const TablaUsuariosPilates = () => {
                   .map((user, index) => (
                   <Tr key={user._id} fontSize={fontSize}>
                     <Td>{index + 1}</Td>
-                    <Td h='500px'>
+                    <Td>
                       <Popover trigger="click" placement="bottom">
                         <PopoverTrigger>
                           <Box as="span" cursor="pointer" fontWeight="bold">
                             {user.nombre}
                           </Box>
                         </PopoverTrigger>
-                        <PopoverContent
-                          bg="gray.700"
-                          color="white"
-                          whiteSpace="pre-line"
-                          width="auto"
-                          minW="200px"
-                          maxW="95vw"
-                          px={4}
-                          py={2}
-                          overflowWrap="break-word"
-                          wordBreak="break-word"
-                          >
-                          <PopoverArrow />
-                          <PopoverBody whiteSpace="pre-line" >
-                            Celular: {user.celular}{"\n"}
-                            Días x Semana: {user.diasSemanales} días{"\n"}
-                            Registrado: {new Date(user.fechaRegistro).toLocaleDateString()}
-                          </PopoverBody>
-                        </PopoverContent>
+                        <Portal>
+                          <PopoverContent
+                            bg="gray.700"
+                            color="white"
+                            whiteSpace="pre-line"
+                            width="auto"
+                            minW="200px"
+                            maxW="95vw"
+                            px={4}
+                            py={2}
+                            overflowWrap="break-word"
+                            wordBreak="break-word"
+                            >
+                              <PopoverArrow />
+                              <PopoverBody whiteSpace="pre-line" >
+                                Celular: {user.celular}{"\n"}
+                                Días x Semana: {user.diasSemanales} días{"\n"}
+                                Registrado: {new Date(user.fechaRegistro).toLocaleDateString()}
+                              </PopoverBody>
+                          </PopoverContent>
+                        </Portal>
                       </Popover>
                     </Td>
                     <Td>{user.apellido}</Td>

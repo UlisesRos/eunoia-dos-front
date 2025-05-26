@@ -41,11 +41,11 @@ const TimeSlot = ({ hora, usersInSlot = [] }) => {
                     fontSize={{ base: 'xs', md: 'sm' }}
                     px={3}
                     py={1}
-                    maxW="80px"
+                    maxW="150px"
                     whiteSpace="nowrap"
                     overflow="hidden"
                     textOverflow="ellipsis"
-                >
+                    >
                     {user || 'Libre'}
                 </Tag>
                 ))}
