@@ -216,6 +216,7 @@ import logo from '../img/logos/faviconE.png';
                         <Button display={user.rol === 'admin' ? 'block' : 'none'} w={{ base: '100%', md: 'auto' }} fontSize={{ base: 'sm', md: 'md' }} colorScheme="red" onClick={() => navigate('/registro')} border='solid 2px' borderColor='brand.secondary' bg='brand.primary' color='brand.secondary' fontWeight='bold'>
                             Registro de clientes
                         </Button>
+
                     </Flex>
                 </Flex>
 
@@ -268,13 +269,22 @@ import logo from '../img/logos/faviconE.png';
 
                 </Flex>
 
-                {turnos.length === 0 ? (
-                    <Text textAlign="center" color="red.500" fontWeight="bold">
-                        Cargando turnos o no disponibles en este momento.
-                    </Text>
-                    ) : (
+                {isLoading ? (
+                    <Flex
+                        flexDir='column'
+                        alignItems='center'
+                        justifyContent='center'
+                        minH="30vh"
+                    >
+                        <Spinner size="xl" thickness="4px" speed="0.65s" color="teal.500" mb={4} />
+                        <Text textAlign="center" color="brand.secondary" fontWeight="bold">
+                            Cargando turnos...
+                        </Text>
+                    </Flex>
+                ) : (
                     <CalendarGrid weekDates={weekDates} turnos={turnos} />
                 )}
+
 
                 {/* Modal para elegir días y horarios */}
                 <SelectDaysModal
@@ -293,6 +303,38 @@ import logo from '../img/logos/faviconE.png';
                             })
                     }}
                 />
+
+                {user?.rol === 'usuario' && userSelections.length === 0 && (
+                    <Box
+                        position="fixed"
+                        bottom="0"
+                        left="0"
+                        w="100%"
+                        bg="rgba(0, 0, 0, 0.85)"
+                        color="white"
+                        py={4}
+                        px={6}
+                        zIndex={1000}
+                        display="flex"
+                        flexDirection={{ base: 'column', md: 'row' }}
+                        justifyContent="space-between"
+                        alignItems="center"
+                        gap={3}
+                        boxShadow="0 -2px 8px rgba(0,0,0,0.3)"
+                    >
+                        <Text fontSize={{ base: 'sm', md: 'md' }} fontWeight="bold">
+                        Todavía no elegiste ningún turno
+                        </Text>
+                        <Button
+                        size="sm"
+                        colorScheme="teal"
+                        onClick={() => setShowSelectModal(true)}
+                        >
+                        Asignar turno
+                        </Button>
+                    </Box>
+                )}
+
             </Box>
         );
 };

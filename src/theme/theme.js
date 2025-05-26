@@ -8,7 +8,7 @@ const theme = extendTheme({
         },
     },
     fonts: {
-        heading: "Poppins, sans-serif",
+        heading: "Montserrat, sans-serif",
         body: "Roboto, sans-serif",
     },
     components: {

@@ -1,5 +1,4 @@
-import { Box, Flex, Text, Link, Image } from "@chakra-ui/react";
-import avatar from '../img/avatar/avatar.svg';
+import { Box, Flex, Text, Link } from "@chakra-ui/react";
 import '../css/footer.css'
 
 const Footer = () => {
@@ -13,7 +12,7 @@ const Footer = () => {
                 <Text
                     fontFamily="'Dancing Script', cursive"
                     fontSize='2xl'
-                    mb='10px'
+                    mb='20px'
                     maxW='90%'
                     >
                     Eunoia. <br />Palabra griega que significa claridad mental y pensamiento positivo.
@@ -48,13 +47,12 @@ const Footer = () => {
                     }}
                     >
                     <Flex
-                        mt='10px'
+                        mt='20px'
                         alignItems='center'
                         justifyContent='center'
                         columnGap='4px'
                         >
-                        <Image src={avatar} h='30px' w='30px'/>
-                        <Text fontFamily="'Playfair Display', serif">Hecho por Ulises Ros</Text>
+                        <Text >Hecho por Ulises Ros</Text>
                     </Flex>
                 </Link> 
             </Flex>

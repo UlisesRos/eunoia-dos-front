@@ -86,25 +86,25 @@ const TablaUsuariosPilates = () => {
     );
   };
 
-  // Funcion para los pagos
   const handleTogglePago = async (userId, currentPago) => {
-    try {
-      const updatedPago = !currentPago;
+  try {
+    const updatedPago = !currentPago;
 
-      // Petición para actualizar en backend
-      await axios.patch(`${backendUrl}/api/usuarios/updatePago/${userId}`, {
-        pago: updatedPago,
-      });
+    // Petición al backend que devuelve el usuario actualizado
+    const res = await axios.patch(`${backendUrl}/api/usuarios/updatePago/${userId}`, {
+      pago: updatedPago,
+    });
 
-      // Actualizar localmente
-      setUsuarios((prev) =>
-        prev.map((u) => (u._id === userId ? { ...u, pago: updatedPago } : u))
-      );
-    } catch (error) {
-      console.error('Error al actualizar pago:', error);
-      alert('No se pudo actualizar el estado de pago.');
-    }
+    // Actualizar el estado local con los datos completos del usuario actualizado
+    setUsuarios((prev) =>
+      prev.map((u) => (u._id === userId ? res.data : u))
+    );
+  } catch (error) {
+    console.error('Error al actualizar pago:', error);
+    alert('No se pudo actualizar el estado de pago.');
+  }
 };
+
 
 
   return (
@@ -122,7 +122,7 @@ const TablaUsuariosPilates = () => {
           flexDirection='column'
           mb={8}
           >
-          <Image src={logo} borderRadius='100%' w='150px'/>
+          <Image src={logo} borderRadius='100%' w={{ base: "180px", md: "150px" }}/>
           <Button onClick={() => navigate('/calendario')} border='solid 1px' borderColor='brand.secondary' bg='brand.primary' color='brand.secondary' fontWeight='bold'>
             Volver al Calendario
           </Button>
@@ -168,7 +168,7 @@ const TablaUsuariosPilates = () => {
                 padding: '8px',
                 borderRadius: '8px',
                 border: '2px solid #ccc',
-                width: '180px',
+                width: '250px',
                 backgroundColor: '#6A8677',
               }}
             >
@@ -202,6 +202,9 @@ const TablaUsuariosPilates = () => {
                   </Th>
                   <Th color="brand.secondary" fontSize={fontSize}>
                     Pago
+                  </Th>
+                  <Th color='brand.secondary' fontSize={fontSize}>
+                    Fecha de Pago
                   </Th>
                   <Th color="brand.secondary" fontSize={fontSize}>
                     Acciones
@@ -276,6 +279,10 @@ const TablaUsuariosPilates = () => {
                         </Box>
                       </Tooltip>
                     </Td>
+                    <Td>
+                      {user.fechaPago ? new Date(user.fechaPago).toLocaleDateString() : '-'}
+                    </Td>
+
                     <Td>
                       <Flex
                         gap={2}

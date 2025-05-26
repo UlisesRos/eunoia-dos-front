@@ -20,7 +20,7 @@ const UserPerfil = () => {
         minH="100vh"
         bg="brand.primary"
         display="flex"
-        justifyContent="center"
+        justifyContent="start"
         alignItems="center"
         flexDirection="column"
         px={4}
@@ -34,13 +34,13 @@ const UserPerfil = () => {
                 <Image
                 src={logo}
                 borderRadius="full"
-                w={{ base: "100px", md: "150px" }}
+                w={{ base: "180px", md: "150px" }}
                 />
             </Box>
 
             <Button border='solid 2px' borderColor='brand.secondary' bg='brand.primary' color='brand.secondary' fontWeight='bold'
                 onClick={() => navigate("/calendario")}
-                mb={4}
+                mb='50px'
                 >
                 Volver al Calendario
             </Button>
