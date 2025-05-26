@@ -205,7 +205,7 @@ import logo from '../img/logos/faviconE.png';
                         flexDir={{ base: 'column', md: 'row' }}
                         gap={4}
                         >
-                        <Button w={{ base: '100%', md: 'auto' }} fontSize={{ base: 'sm', md: 'md' }} colorScheme="red" onClick={handleLogout} border='solid 2px' borderColor='brand.secondary' bg='brand.primary' color='brand.secondary' fontWeight='bold'>
+                        <Button w={{ base: '250px', md: 'auto' }} fontSize={{ base: 'sm', md: 'md' }} colorScheme="red" onClick={handleLogout} border='solid 2px' borderColor='brand.secondary' bg='brand.primary' color='brand.secondary' fontWeight='bold'>
                             Cerrar sesión
                         </Button>
                         
@@ -248,7 +248,7 @@ import logo from '../img/logos/faviconE.png';
                     <Button
                         display={cambiosRestantes > 0 ? 'block' : 'none'}
                         border='solid 2px' borderColor='brand.secondary' bg='brand.primary' color='brand.secondary' fontWeight='bold'
-                        w={{ base: '50%', sm: 'auto' }}
+                        w={{ base: '80%', sm: 'auto' }}
                         fontSize={{ base: 'sm', md: 'md' }}
                         onClick={handleRealizarCambios}
                         isDisabled={estaBloqueadoPorPago(user)}

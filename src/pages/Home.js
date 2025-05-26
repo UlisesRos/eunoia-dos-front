@@ -6,7 +6,7 @@ const Home = () => {
     return (
         <Flex direction={{ base: 'column', md: 'row' }} h='100vh' >
             <SidebarMenu />
-            <Box w={['100%','100%','86%']} h='100vh' display='flex' flexDir='column' alignItems='center' justifyContent='center' bg='brand.primary' color='brand.secondary' textAlign='center'>
+            <Box w={['100%','100%','86%']} h={['90vh', '100vh', '100vh']} display='flex' flexDir='column' alignItems='center' justifyContent='center' bg='brand.primary' color='brand.secondary' textAlign='center'>
                 <Heading
                     fontFamily="'Playfair Display', serif"
                     fontWeight="700"

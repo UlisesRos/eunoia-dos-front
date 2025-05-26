@@ -55,6 +55,7 @@ const Register = () => {
             duration: 3000,
             isClosable: true,
         });
+        setLoading(false); // Desactivar el estado de loading
         return;
         }
 
