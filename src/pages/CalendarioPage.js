@@ -205,15 +205,15 @@ import logo from '../img/logos/faviconE.png';
                         flexDir={{ base: 'column', md: 'row' }}
                         gap={4}
                         >
-                        <Button w={{ base: '100%', md: '70%' }} fontSize={{ base: 'sm', md: 'md' }} colorScheme="red" onClick={handleLogout} border='solid 2px' borderColor='brand.secondary' bg='brand.primary' color='brand.secondary' fontWeight='bold'>
+                        <Button w={{ base: '100%', md: 'auto' }} fontSize={{ base: 'sm', md: 'md' }} colorScheme="red" onClick={handleLogout} border='solid 2px' borderColor='brand.secondary' bg='brand.primary' color='brand.secondary' fontWeight='bold'>
                             Cerrar sesión
                         </Button>
                         
-                        <Button display={user.rol === 'usuario' ? 'block' : 'none'} w={{ base: '100%', md: '70%' }} fontSize={{ base: 'sm', md: 'md' }} colorScheme="red" onClick={() => navigate('/perfil')} border='solid 2px' borderColor='brand.secondary' bg='brand.primary' color='brand.secondary' fontWeight='bold'>
+                        <Button display={user.rol === 'usuario' ? 'block' : 'none'} w={{ base: '100%', md: 'auto' }} fontSize={{ base: 'sm', md: 'md' }} colorScheme="red" onClick={() => navigate('/perfil')} border='solid 2px' borderColor='brand.secondary' bg='brand.primary' color='brand.secondary' fontWeight='bold'>
                             Mi perfil
                         </Button>
                         
-                        <Button display={user.rol === 'admin' ? 'block' : 'none'} w={{ base: '100%', md: '70%' }} fontSize={{ base: 'sm', md: 'md' }} colorScheme="red" onClick={() => navigate('/registro')} border='solid 2px' borderColor='brand.secondary' bg='brand.primary' color='brand.secondary' fontWeight='bold'>
+                        <Button display={user.rol === 'admin' ? 'block' : 'none'} w={{ base: '100%', md: 'auto' }} fontSize={{ base: 'sm', md: 'md' }} colorScheme="red" onClick={() => navigate('/registro')} border='solid 2px' borderColor='brand.secondary' bg='brand.primary' color='brand.secondary' fontWeight='bold'>
                             Registro de clientes
                         </Button>
                     </Flex>
