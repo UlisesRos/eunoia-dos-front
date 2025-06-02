@@ -1,6 +1,6 @@
 import { Box, Text, Tag } from '@chakra-ui/react';
 
-const TimeSlot = ({ hora, usersInSlot = [] }) => {
+const TimeSlot = ({ hora, usersInSlot = [], currentUser }) => {
     const cantidadMaxima = 7;
     const lugares = [...usersInSlot];
 
@@ -35,7 +35,8 @@ const TimeSlot = ({ hora, usersInSlot = [] }) => {
                 {lugares.map((user, i) => (
                 <Tag
                     key={i}
-                    colorScheme={user ? 'green' : 'gray'}
+                    colorScheme={user ? user === currentUser ? 'red' : 'green' : 'gray'}
+                    color='black'
                     textTransform="capitalize"
                     fontWeight={user ? 'bold' : 'normal'}
                     fontSize={{ base: 'xs', md: 'sm' }}

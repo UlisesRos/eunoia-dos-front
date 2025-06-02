@@ -1,9 +1,12 @@
 import { Box, Heading, VStack } from '@chakra-ui/react';
 import TimeSlot from './TimeSlot';
 import { horariosPorDia } from '../../utils/horarios';
+import { useAuth } from '../../context/AuthContext';
 
 const DayColumn = ({ dayName, date, turnos }) => {
     const horarios = horariosPorDia[dayName.toLowerCase()] || [];
+
+    const { user } = useAuth();
 
     return (
         <Box
@@ -21,7 +24,7 @@ const DayColumn = ({ dayName, date, turnos }) => {
                 fontSize={{ base: 'md', md: 'lg' }} // tamaño adaptable
                 wordBreak="break-word"
             >
-                {dayName} - {date}
+                {dayName}
             </Heading>
 
             <VStack
@@ -34,7 +37,7 @@ const DayColumn = ({ dayName, date, turnos }) => {
                 {horarios.map((hora, idx) => {
                 const turno = turnos.find(t => t.day === dayName && t.hour === hora);
                 return (
-                    <TimeSlot key={idx} hora={hora} usersInSlot={turno?.users || []} />
+                    <TimeSlot key={idx} hora={hora} usersInSlot={turno?.users || []} currentUser={`${user?.nombre} ${user?.apellido}`}/>
                 );
                 })}
             </VStack>

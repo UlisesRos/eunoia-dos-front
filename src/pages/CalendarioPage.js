@@ -1,8 +1,7 @@
-import { Button, Box, Heading, Text, Select, HStack, Spinner, Flex, Image } from '@chakra-ui/react';
+import { Button, Box, Heading, Text, Spinner, Flex, Image } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { getFilteredWeeks } from '../utils/calendarUtils';
-import WeekSelector from '../components/Calendar/WeekSelector';
 import CalendarGrid from '../components/Calendar/CalendarGrid';
 import SelectDaysModal from '../components/Modals/SelectDaysModal';
 import { getTurnosPorHorario, getUserSelections } from '../services/calendarAPI';
@@ -32,9 +31,9 @@ import logo from '../img/logos/faviconE.png';
         }, []);
 
         // Estado para mes y año seleccionados (por defecto hoy)
-        const [selectedMonth, setSelectedMonth] = useState(today.getMonth());
-        const [selectedYear, setSelectedYear] = useState(today.getFullYear());
-        const [currentWeek, setCurrentWeek] = useState(1);
+        const selectedMonth = today.getMonth();
+        const selectedYear = today.getFullYear();
+        const currentWeek = 1;
         const [turnos, setTurnos] = useState([]);
 
         // Modal para seleccionar días y horarios
@@ -61,17 +60,6 @@ import logo from '../img/logos/faviconE.png';
         
             logout();
             navigate('/');
-        };
-
-        // Cuando cambias mes o año, resetea semana a 1
-        const onMonthChange = (e) => {
-            setSelectedMonth(Number(e.target.value));
-            setCurrentWeek(1);
-        };
-
-        const onYearChange = (e) => {
-            setSelectedYear(Number(e.target.value));
-            setCurrentWeek(1);
         };
 
         // Obtener selecciones y cambios
@@ -135,13 +123,7 @@ import logo from '../img/logos/faviconE.png';
     }
 
         return (
-            <Box
-                color='red'
-                fontWeight='bold'
-                >
-                Pagina Fuera de Servicio
-            </Box>
-            /*<Box    
+            <Box    
                 w="100vw"
                 maxW="100%"
                 overflowX="hidden"
@@ -193,44 +175,27 @@ import logo from '../img/logos/faviconE.png';
                     gap={4}
                     mb={4}
                     >
-                    <HStack spacing={4} mb={4} color='brand.primary' alignItems='center'>
-                        <Select value={selectedMonth} onChange={onMonthChange} maxW="150px" bg='brand.secondary' fontWeight='bold' w={{ base: '100%', md: 'auto' }} fontSize={{ base: 'sm', md: 'md' }}>
-                            {monthNames.map((name, i) => (
-                                <option key={i} value={i}>{name}</option>
-                            ))}
-                        </Select>
-
-                        <Select value={selectedYear} onChange={onYearChange} maxW="100px" bg='brand.secondary' fontWeight='bold'>
-                            {[selectedYear - 1, selectedYear, selectedYear + 1].map(year => (
-                                <option key={year} value={year}>{year}</option>
-                            ))}
-                        </Select>
-                    </HStack>
-
                     <Flex
                         flexDir={{ base: 'column', md: 'row' }}
+                        justifyContent='space-between'
+                        alignItems='center'
+                        w='100%'
                         gap={4}
                         >
-                        <Button w={{ base: '250px', md: 'auto' }} fontSize={{ base: 'sm', md: 'md' }} colorScheme="red" onClick={handleLogout} border='solid 2px' borderColor='brand.secondary' bg='brand.primary' color='brand.secondary' fontWeight='bold'>
+                        <Button w={{ base: '80%', md: 'auto' }} fontSize={{ base: 'sm', md: 'md' }} colorScheme="red" onClick={handleLogout} border='solid 2px' borderColor='brand.secondary' bg='brand.primary' color='brand.secondary' fontWeight='bold'>
                             Cerrar sesión
                         </Button>
                         
-                        <Button display={user.rol === 'usuario' ? 'block' : 'none'} w={{ base: '100%', md: 'auto' }} fontSize={{ base: 'sm', md: 'md' }} colorScheme="red" onClick={() => navigate('/perfil')} border='solid 2px' borderColor='brand.secondary' bg='brand.primary' color='brand.secondary' fontWeight='bold'>
+                        <Button display={user.rol === 'usuario' ? 'block' : 'none'} w={{ base: '80%', md: 'auto' }} fontSize={{ base: 'sm', md: 'md' }} colorScheme="red" onClick={() => navigate('/perfil')} border='solid 2px' borderColor='brand.secondary' bg='brand.primary' color='brand.secondary' fontWeight='bold'>
                             Mi perfil
                         </Button>
                         
-                        <Button display={user.rol === 'admin' ? 'block' : 'none'} w={{ base: '100%', md: 'auto' }} fontSize={{ base: 'sm', md: 'md' }} colorScheme="red" onClick={() => navigate('/registro')} border='solid 2px' borderColor='brand.secondary' bg='brand.primary' color='brand.secondary' fontWeight='bold'>
+                        <Button display={user.rol === 'admin' ? 'block' : 'none'} w={{ base: '80%', md: 'auto' }} fontSize={{ base: 'sm', md: 'md' }} colorScheme="red" onClick={() => navigate('/registro')} border='solid 2px' borderColor='brand.secondary' bg='brand.primary' color='brand.secondary' fontWeight='bold'>
                             Registro de clientes
                         </Button>
 
                     </Flex>
                 </Flex>
-
-                <WeekSelector
-                    currentWeek={currentWeek}
-                    onWeekChange={setCurrentWeek}
-                    availableWeeks={filteredWeeks.map(week => week.weekNumber)}
-                />
 
                 <Flex
                     direction={{ base: 'column', sm: 'row' }}
@@ -291,8 +256,8 @@ import logo from '../img/logos/faviconE.png';
                     <CalendarGrid weekDates={weekDates} turnos={turnos} />
                 )}
 
-                {/* Modal para elegir días y horarios *//*}*/
-                /*
+
+                {/* Modal para elegir días y horarios */}
                 <SelectDaysModal
                     isOpen={showSelectModal}
                     onClose={() => setShowSelectModal(false)}
@@ -329,19 +294,19 @@ import logo from '../img/logos/faviconE.png';
                         boxShadow="0 -2px 8px rgba(0,0,0,0.3)"
                     >
                         <Text fontSize={{ base: 'sm', md: 'md' }} fontWeight="bold">
-                        Todavía no elegiste ningún turno
+                            Todavía no elegiste ningún turno
                         </Text>
                         <Button
                         size="sm"
                         colorScheme="teal"
                         onClick={() => setShowSelectModal(true)}
                         >
-                        Asignar turno
+                            Asignar turno
                         </Button>
                     </Box>
                 )}
 
-            </Box>*/
+            </Box>
         );
 };
 

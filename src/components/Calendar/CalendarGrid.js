@@ -11,7 +11,7 @@ const CalendarGrid = ({ weekDates, turnos }) => {
                 px={2} // un poco de padding horizontal
             >
                 {weekDates.map(({ dayName, date }, index) => (
-                <DayColumn key={index} dayName={dayName} date={date} turnos={turnos} />
+                    <DayColumn key={index} dayName={dayName} date={date} turnos={turnos} />
                 ))}
             </Grid> 
         </Box>
