@@ -135,7 +135,13 @@ import logo from '../img/logos/faviconE.png';
     }
 
         return (
-            <Box    
+            <Box
+                color='red'
+                fontWeight='bold'
+                >
+                Pagina Fuera de Servicio
+            </Box>
+            /*<Box    
                 w="100vw"
                 maxW="100%"
                 overflowX="hidden"
@@ -231,11 +237,10 @@ import logo from '../img/logos/faviconE.png';
                     alignItems={{ base: 'center', sm: 'center' }}
                     gap={4}
                     m={{ base: '20px 0', md: '30px 0 30px 10px' }}
-                    //display={user.rol === 'admin' ? 'none' : 'flex'}
-                    display='none'
+                    display={user.rol === 'admin' ? 'none' : 'flex'}
                     >
                     {}
-                    <Text fontWeight="bold" display='none'>
+                    <Text fontWeight="bold">
                         Cambios Mensuales Restantes: {cambiosRestantes} / 2
                     </Text>
 
@@ -248,8 +253,7 @@ import logo from '../img/logos/faviconE.png';
                     </Text>
 
                     <Button
-                        // display={cambiosRestantes > 0 ? 'block' : 'none'}
-                        display='none'
+                        display={cambiosRestantes > 0 ? 'block' : 'none'}
                         border='solid 2px' borderColor='brand.secondary' bg='brand.primary' color='brand.secondary' fontWeight='bold'
                         w={{ base: '80%', sm: 'auto' }}
                         fontSize={{ base: 'sm', md: 'md' }}
@@ -264,7 +268,6 @@ import logo from '../img/logos/faviconE.png';
                             color='red.500'
                             fontWeight='bold'
                             fontSize='sm'
-                            display='none'
                             >
                             Cambios bloqueados por falta de pago.
                         </Text>
@@ -288,8 +291,8 @@ import logo from '../img/logos/faviconE.png';
                     <CalendarGrid weekDates={weekDates} turnos={turnos} />
                 )}
 
-
-                {/* Modal para elegir días y horarios */}
+                {/* Modal para elegir días y horarios *//*}*/
+                /*
                 <SelectDaysModal
                     isOpen={showSelectModal}
                     onClose={() => setShowSelectModal(false)}
@@ -338,7 +341,7 @@ import logo from '../img/logos/faviconE.png';
                     </Box>
                 )}
 
-            </Box>
+            </Box>*/
         );
 };
 
