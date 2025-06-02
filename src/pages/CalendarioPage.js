@@ -231,10 +231,11 @@ import logo from '../img/logos/faviconE.png';
                     alignItems={{ base: 'center', sm: 'center' }}
                     gap={4}
                     m={{ base: '20px 0', md: '30px 0 30px 10px' }}
-                    display={user.rol === 'admin' ? 'none' : 'flex'}
+                    //display={user.rol === 'admin' ? 'none' : 'flex'}
+                    display='none'
                     >
                     {}
-                    <Text fontWeight="bold">
+                    <Text fontWeight="bold" display='none'>
                         Cambios Mensuales Restantes: {cambiosRestantes} / 2
                     </Text>
 
@@ -247,7 +248,8 @@ import logo from '../img/logos/faviconE.png';
                     </Text>
 
                     <Button
-                        display={cambiosRestantes > 0 ? 'block' : 'none'}
+                        // display={cambiosRestantes > 0 ? 'block' : 'none'}
+                        display='none'
                         border='solid 2px' borderColor='brand.secondary' bg='brand.primary' color='brand.secondary' fontWeight='bold'
                         w={{ base: '80%', sm: 'auto' }}
                         fontSize={{ base: 'sm', md: 'md' }}
@@ -262,6 +264,7 @@ import logo from '../img/logos/faviconE.png';
                             color='red.500'
                             fontWeight='bold'
                             fontSize='sm'
+                            display='none'
                             >
                             Cambios bloqueados por falta de pago.
                         </Text>
