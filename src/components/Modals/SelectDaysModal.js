@@ -17,6 +17,7 @@ import {
 } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import { setUserSelections } from '../../services/calendarAPI';
+import { useAuth } from '../../context/AuthContext';
 
     const availableDays = [
         { day: 'Lunes', hours: ['08:00', '09:00', '10:00', '16:00', '17:00', '18:00', '19:00', '20:00'] },
@@ -48,9 +49,17 @@ import { setUserSelections } from '../../services/calendarAPI';
         const [selectedKeys, setSelectedKeys] = useState(new Set());
         const [loading, setLoading] = useState(false); // Estado para controlar el loading
 
+        const { user } = useAuth()
+
+        const { nombre, apellido } = user
+        const nombreC = `${nombre} ${apellido}`
+
         const turnosCompletos = new Set(
-            turnosOcupados.filter(t => t.users.length >= 7).map(t => toKey(t.day, t.hour))
+            turnosOcupados
+                .filter(t => t.users.length >= 7 && !t.users.includes(nombreC))
+                .map(t => toKey(t.day, t.hour))
         );
+
 
         useEffect(() => {
             if (!isOpen) return;
@@ -61,7 +70,7 @@ import { setUserSelections } from '../../services/calendarAPI';
         const toggleSelection = (key) => {
             const newSelected = new Set(selectedKeys);
             if (newSelected.has(key)) {
-            newSelected.delete(key);
+                newSelected.delete(key);
             } else {
             if (newSelected.size >= diasSemanales) {
                 toast({
