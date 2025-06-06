@@ -1,7 +1,7 @@
 import { Grid, Box } from '@chakra-ui/react';
 import DayColumn from './DayColumn';
 
-const CalendarGrid = ({ weekDates, turnos }) => {
+const CalendarGrid = ({ weekDates, turnos, onNombreClick }) => {
     return (
         <Box overflowX="auto">
             <Grid
@@ -11,7 +11,13 @@ const CalendarGrid = ({ weekDates, turnos }) => {
                 px={2} // un poco de padding horizontal
             >
                 {weekDates.map(({ dayName, date }, index) => (
-                    <DayColumn key={index} dayName={dayName} date={date} turnos={turnos} />
+                    <DayColumn
+                        key={index}
+                        dayName={dayName}
+                        date={date}
+                        turnos={turnos}
+                        onNombreClick={onNombreClick}
+                    />                
                 ))}
             </Grid> 
         </Box>

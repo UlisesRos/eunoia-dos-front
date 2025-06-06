@@ -3,7 +3,7 @@ import TimeSlot from './TimeSlot';
 import { horariosPorDia } from '../../utils/horarios';
 import { useAuth } from '../../context/AuthContext';
 
-const DayColumn = ({ dayName, date, turnos }) => {
+const DayColumn = ({ dayName, date, turnos, onNombreClick }) => {
     const horarios = horariosPorDia[dayName.toLowerCase()] || [];
 
     const { user } = useAuth();
@@ -37,9 +37,16 @@ const DayColumn = ({ dayName, date, turnos }) => {
                 {horarios.map((hora, idx) => {
                 const turno = turnos.find(t => t.day === dayName && t.hour === hora);
                 return (
-                    <TimeSlot key={idx} hora={hora} usersInSlot={turno?.users || []} currentUser={`${user?.nombre} ${user?.apellido}`}/>
-                );
-                })}
+                    <TimeSlot
+                        key={idx}
+                        dia={dayName}
+                        hora={hora}
+                        usersInSlot={turno?.users || []}
+                        currentUser={`${user?.nombre} ${user?.apellido}`}
+                        onNombreClick={(dia, hora, user) => onNombreClick(dia, hora, user)}
+                    />                
+                );                                
+            })}
             </VStack>
         </Box>
     );

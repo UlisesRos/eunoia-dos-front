@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { getFilteredWeeks } from '../utils/calendarUtils';
 import CalendarGrid from '../components/Calendar/CalendarGrid';
+import EditSingleTurnModal from '../components/Modals/EditSingleTurnModal';
+import AdminEditTurnModal from '../components/Modals/AdminEditTurnModal';
 import SelectDaysModal from '../components/Modals/SelectDaysModal';
 import { getTurnosPorHorario, getUserSelections } from '../services/calendarAPI';
 import { useAuth } from '../context/AuthContext';
@@ -21,6 +23,10 @@ import logo from '../img/logos/faviconE.png';
         const [isLoading, setIsLoading] = useState(true);
         const [userSelections, setUserSelectionsState] = useState([]);
         const [cambiosRestantes, setCambiosRestantes] = useState(2);
+        const [showEditModal, setShowEditModal] = useState(false);
+        const [horarioActual, setHorarioActual] = useState(null);
+        const [showAdminModal, setShowAdminModal] = useState(false);
+        const [selectedUsuario, setSelectedUsuario] = useState(null);
 
         useEffect(() => {
             const timer = setTimeout(() => {
@@ -93,10 +99,6 @@ import logo from '../img/logos/faviconE.png';
                 .catch(() => console.error('No se pudieron obtener los turnos.'));
         }, []);
 
-        const handleRealizarCambios = () => {
-            setShowSelectModal(true);
-        }
-
         const estaBloqueadoPorPago = (user) => {
             const hoy = new Date();
             const diaDelMes = hoy.getDate();
@@ -104,6 +106,19 @@ import logo from '../img/logos/faviconE.png';
             return !user.pago && diaDelMes > 10;
         };
 
+        const handleNombreClick = (dia, hora, clickedUser) => {
+            console.log(clickedUser)
+            if (user.rol === 'admin') {
+                setSelectedUsuario(clickedUser);
+                setHorarioActual({ day: dia, hour: hora });
+                setShowAdminModal(true);
+            } else if (`${user.nombre} ${user.apellido}` === clickedUser?.nombre) {
+                setHorarioActual({ day: dia, hour: hora });
+                setShowEditModal(true);
+            }
+        };
+
+        
         if (isLoading) {
         return (
             <Box
@@ -217,17 +232,6 @@ import logo from '../img/logos/faviconE.png';
                         No tienes mas cambios disponibles este mes.
                     </Text>
 
-                    <Button
-                        display={cambiosRestantes > 0 ? 'block' : 'none'}
-                        border='solid 2px' borderColor='brand.secondary' bg='brand.primary' color='brand.secondary' fontWeight='bold'
-                        w={{ base: '80%', sm: 'auto' }}
-                        fontSize={{ base: 'sm', md: 'md' }}
-                        onClick={handleRealizarCambios}
-                        isDisabled={estaBloqueadoPorPago(user)}
-                        >
-                        Realizar Cambios
-                    </Button>
-
                     {estaBloqueadoPorPago(user) && (
                         <Text
                             color='red.500'
@@ -253,7 +257,7 @@ import logo from '../img/logos/faviconE.png';
                         </Text>
                     </Flex>
                 ) : (
-                    <CalendarGrid weekDates={weekDates} turnos={turnos} />
+                    <CalendarGrid weekDates={weekDates} turnos={turnos} onNombreClick={handleNombreClick}/>
                 )}
 
 
@@ -272,6 +276,37 @@ import logo from '../img/logos/faviconE.png';
                                 setUserSelectionsState(data.selections || []);
                                 setCambiosRestantes(2 - (data.changesThisMonth || 0));
                             })
+                    }}
+                />
+
+                <EditSingleTurnModal
+                    isOpen={showEditModal}
+                    onClose={() => setShowEditModal(false)}
+                    userSelections={userSelections}
+                    turnosOcupados={turnos}
+                    cambiosRestantes={cambiosRestantes}
+                    horarioActual={horarioActual}
+                    onUpdate={() => {
+                        getUserSelections().then(data => {
+                            setUserSelectionsState(data.selections || []);
+                            setCambiosRestantes(2 - (data.changesThisMonth || 0));
+                        });
+                        getTurnosPorHorario().then(setTurnos);
+                    }}
+                />
+
+                <AdminEditTurnModal
+                    isOpen={showAdminModal}
+                    onClose={() => setShowAdminModal(false)}
+                    selectedUser={selectedUsuario}
+                    horarioActual={horarioActual}
+                    turnosOcupados={turnos}
+                    onUpdate={() => {
+                        getTurnosPorHorario().then(setTurnos);
+                        getUserSelections().then(data => {
+                        setUserSelectionsState(data.selections || []);
+                        setCambiosRestantes(2 - (data.changesThisMonth || 0));
+                        });
                     }}
                 />
 
