@@ -1,7 +1,6 @@
 import {
     Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton,
-    ModalBody, ModalFooter, Button, Select, Radio, RadioGroup,
-    useToast, Spinner, Text, Stack
+    ModalBody, ModalFooter, Button, Select, useToast, Spinner, Text
 } from '@chakra-ui/react';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
@@ -11,10 +10,10 @@ const API_URL = `${backendUrl}/api/calendar`;
 
 const diasDisponibles = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes'];
 const horasDisponibles = {
-    'Lunes': ['08:00', '09:00', '10:00', '16:00', '17:00', '18:00', '19:00'],
-    'Martes': ['07:00', '08:00', '09:00', '10:00', '16:00', '17:00', '18:00', '19:00'],
-    'Miércoles': ['08:00', '09:00', '17:00', '18:00', '19:00'],
-    'Jueves': ['07:00', '08:00', '09:00', '10:00', '16:00', '17:00', '18:00', '19:00'],
+    'Lunes': ['08:00', '09:00', '10:00', '16:00', '17:00', '18:00', '19:00', '20:00'],
+    'Martes': ['07:00', '08:00', '09:00', '10:00', '16:00', '17:00', '18:00', '19:00', '20:00'],
+    'Miércoles': ['08:00', '09:00', '17:00', '18:00', '19:00', '20:00'],
+    'Jueves': ['07:00', '08:00', '09:00', '10:00', '16:00', '17:00', '18:00', '19:00', '20:00'],
     'Viernes': ['08:00', '09:00', '10:00', '17:00', '18:00', '19:00']
 };
 
@@ -29,14 +28,12 @@ export default function AdminEditTurnModal({
     const toast = useToast();
     const [selectedDay, setSelectedDay] = useState('');
     const [selectedHour, setSelectedHour] = useState('');
-    const [changeType, setChangeType] = useState('temporal');
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         if (isOpen) {
             setSelectedDay('');
             setSelectedHour('');
-            setChangeType('temporal');
         }
     }, [isOpen]);
 
@@ -58,7 +55,7 @@ export default function AdminEditTurnModal({
                 userFullName: selectedUser.nombre, // ejemplo: "María López"
                 current: horarioActual,
                 newTurn: { day: selectedDay, hour: selectedHour },
-                type: changeType // "temporal" o "original"
+                type: 'original'  // Siempre original
             },
             {
                 headers: {
@@ -69,7 +66,7 @@ export default function AdminEditTurnModal({
 
             toast({
                 title: 'Cambio aplicado',
-                description: `El usuario fue movido a ${selectedDay} ${selectedHour} (${changeType})`,
+                description: `El usuario fue movido a ${selectedDay} ${selectedHour} (permanente)`,
                 status: 'success',
                 duration: 3000,
                 isClosable: true,
@@ -93,7 +90,7 @@ export default function AdminEditTurnModal({
 
     const turnosLlenos = new Set(
         turnosOcupados
-            .filter(t => t.users.length >= 7 && !t.users.some(u => u.nombre === selectedUser?.nombre))
+            .filter(t => t.users.length >= 7 && !t.users.some(u => u.nombre.trim() === selectedUser?.nombre.trim()))
             .map(t => `${t.day}-${t.hour}`)
     );
 
@@ -101,18 +98,13 @@ export default function AdminEditTurnModal({
         <Modal isOpen={isOpen} onClose={onClose} isCentered>
             <ModalOverlay />
             <ModalContent color="brand.primary" fontWeight="bold">
-                <ModalHeader>Editar turno de usuario</ModalHeader>
+                <ModalHeader>Editar turno permanente del usuario</ModalHeader>
                 <ModalCloseButton />
                 <ModalBody>
-                    <Text mb={2} textTransform='capitalize'><strong>Usuario:</strong> {selectedUser?.nombre}</Text>
+                    <Text mb={2} textTransform='capitalize'><strong>Usuario:</strong> {selectedUser?.nombre.trim()}</Text>
                     <Text mb={4}><strong>Turno actual:</strong> {horarioActual?.day} {horarioActual?.hour}</Text>
 
-                    <RadioGroup onChange={setChangeType} value={changeType} mb={4}>
-                        <Stack direction="row">
-                            <Radio value="temporal">Solo esta semana</Radio>
-                            <Radio value="original">Permanente</Radio>
-                        </Stack>
-                    </RadioGroup>
+                    {/* Ya no mostramos opciones para tipo de turno */}
 
                     <Select placeholder="Nuevo día" onChange={(e) => {
                         setSelectedDay(e.target.value);

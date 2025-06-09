@@ -118,7 +118,6 @@ import logo from '../img/logos/faviconE.png';
             }
         };
 
-        
         if (isLoading) {
         return (
             <Box

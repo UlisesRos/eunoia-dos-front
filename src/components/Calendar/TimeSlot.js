@@ -1,6 +1,7 @@
 import { Box, Text, Tag, Tooltip } from '@chakra-ui/react';
 import { useAuth } from '../../context/AuthContext';
 
+
 const TimeSlot = ({ hora, usersInSlot = [], currentUser, onNombreClick, dia }) => {
     const cantidadMaxima = 7;
     const lugares = [...usersInSlot];
