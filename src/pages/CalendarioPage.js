@@ -107,7 +107,6 @@ import logo from '../img/logos/faviconE.png';
         };
 
         const handleNombreClick = (dia, hora, clickedUser) => {
-            console.log(clickedUser)
             if (user.rol === 'admin') {
                 setSelectedUsuario(clickedUser);
                 setHorarioActual({ day: dia, hour: hora });
