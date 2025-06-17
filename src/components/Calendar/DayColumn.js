@@ -24,7 +24,7 @@ const DayColumn = ({ dayName, date, turnos, onNombreClick }) => {
                 fontSize={{ base: 'md', md: 'lg' }} // tamaño adaptable
                 wordBreak="break-word"
             >
-                {dayName}
+                {dayName === 'Lunes' || dayName === 'Viernes' ? 'FERIADO' : dayName}
             </Heading>
 
             <VStack
