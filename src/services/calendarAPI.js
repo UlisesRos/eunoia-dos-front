@@ -26,4 +26,14 @@ export const getTurnosPorHorario = async () => {
     return res.data;
 };
 
+export const getFeriados = async () => {
+    const res = await axios.get(`${API_URL}/feriados`, getAuthHeaders());
+    return res.data;
+};
+
+export const marcarFeriado = async (date) => {
+    const res = await axios.post(`${API_URL}/feriado`, { date }, getAuthHeaders());
+    return res.data;
+};
+
 

@@ -6,7 +6,7 @@ import CalendarGrid from '../components/Calendar/CalendarGrid';
 import EditSingleTurnModal from '../components/Modals/EditSingleTurnModal';
 import AdminEditTurnModal from '../components/Modals/AdminEditTurnModal';
 import SelectDaysModal from '../components/Modals/SelectDaysModal';
-import { getTurnosPorHorario, getUserSelections } from '../services/calendarAPI';
+import { getFeriados, getTurnosPorHorario, getUserSelections, marcarFeriado } from '../services/calendarAPI';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '@chakra-ui/react';
 import logo from '../img/logos/faviconE.png';
@@ -27,6 +27,13 @@ import logo from '../img/logos/faviconE.png';
         const [horarioActual, setHorarioActual] = useState(null);
         const [showAdminModal, setShowAdminModal] = useState(false);
         const [selectedUsuario, setSelectedUsuario] = useState(null);
+        const [feriados, setFeriados] = useState([]);
+
+        useEffect(() => {
+            getFeriados()
+                .then(setFeriados)
+                .catch(() => console.error('No se pudieron obtener los feriados.'));
+        }, []);
 
         useEffect(() => {
             const timer = setTimeout(() => {
@@ -112,8 +119,30 @@ import logo from '../img/logos/faviconE.png';
                 setHorarioActual({ day: dia, hour: hora });
                 setShowAdminModal(true);
             } else if (`${user.nombre} ${user.apellido}` === clickedUser?.nombre) {
-                setHorarioActual({ day: dia, hour: hora });
+                setHorarioActual({ day: dia, hour: hora, tipo: clickedUser.tipo });
                 setShowEditModal(true);
+            }
+        };
+
+        const handleMarcarFeriado = async (fechaISO) => {
+            try {
+                await marcarFeriado(fechaISO);
+                toast({
+                    title: 'Feriado marcado',
+                    description: `El día ${fechaISO} fue marcado como feriado.`,
+                    status: 'success',
+                    duration: 3000,
+                    isClosable: true,
+                });
+                getFeriados().then(setFeriados); // recargar la lista
+            } catch (error) {
+                toast({
+                    title: 'Error',
+                    description: error.response?.data?.message || 'No se pudo marcar el feriado.',
+                    status: 'error',
+                    duration: 3000,
+                    isClosable: true,
+                });
             }
         };
 
@@ -255,7 +284,7 @@ import logo from '../img/logos/faviconE.png';
                         </Text>
                     </Flex>
                 ) : (
-                    <CalendarGrid weekDates={weekDates} turnos={turnos} onNombreClick={handleNombreClick}/>
+                    <CalendarGrid weekDates={weekDates} turnos={turnos} onNombreClick={handleNombreClick} feriados={feriados} onMarcarFeriado={handleMarcarFeriado} />
                 )}
 
 
@@ -284,6 +313,8 @@ import logo from '../img/logos/faviconE.png';
                     turnosOcupados={turnos}
                     cambiosRestantes={cambiosRestantes}
                     horarioActual={horarioActual}
+                    feriados={feriados}
+                    weekDates={weekDates}
                     onUpdate={() => {
                         getUserSelections().then(data => {
                             setUserSelectionsState(data.selections || []);

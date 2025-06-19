@@ -1,5 +1,4 @@
 // components/Modals/EditSingleTurnModal.js
-
 import {
     Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton,
     ModalBody, ModalFooter, Button, Select, useToast, Spinner, Text
@@ -10,11 +9,11 @@ import { useAuth } from '../../context/AuthContext';
 
 const diasDisponibles = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes'];
 const horasDisponibles = {
-    'LUNES FERIADO': [''],
+    'Lunes': ['08:00', '09:00', '10:00', '16:00', '17:00', '18:00', '19:00', '20:00'],
     'Martes': ['07:00', '08:00', '09:00', '10:00', '16:00', '17:00', '18:00', '19:00', '20:00'],
     'Miércoles': ['08:00', '09:00', '17:00', '18:00', '19:00', '20:00'],
     'Jueves': ['07:00', '08:00', '09:00', '10:00', '16:00', '17:00', '18:00', '19:00', '20:00'],
-    'VIERNES FERIADO': ['']
+    'Viernes': ['08:00', '09:00', '10:00', '17:00', '18:00', '19:00']
 };
 
 export default function EditSingleTurnModal({
@@ -24,6 +23,8 @@ export default function EditSingleTurnModal({
     turnosOcupados = [],
     cambiosRestantes,
     horarioActual,
+    feriados = [],
+    weekDates = [],
     onUpdate
 }) {
     const toast = useToast();
@@ -33,12 +34,25 @@ export default function EditSingleTurnModal({
     const { user } = useAuth();
     const nombreC = `${user.nombre} ${user.apellido}`;
 
+    const esTurnoTemporal = horarioActual?.tipo === 'temporal';
+
     useEffect(() => {
         if (isOpen) {
             setSelectedDay('');
             setSelectedHour('');
         }
     }, [isOpen]);
+
+    const diasFeriadosISO = feriados.map(f => f.date);
+    const diasBloqueados = new Set();
+
+    // Agregá los días de esta semana marcados como feriados
+    weekDates?.forEach(({ dayName, date }) => {
+        const iso = new Date(date).toISOString().slice(0, 10);
+        if (diasFeriadosISO.includes(iso)) {
+            diasBloqueados.add(dayName);
+        }
+    });
 
     const handleSave = async () => {
         if (!selectedDay || !selectedHour) {
@@ -102,48 +116,145 @@ export default function EditSingleTurnModal({
 
     const horasFiltradas = selectedDay ? horasDisponibles[selectedDay] : [];
 
+    const handleBorrarTurno = async () => {
+
+        const nuevaSeleccion = userSelections.filter(
+            s => !(s.day === horarioActual.day && s.hour === horarioActual.hour)
+        );
+
+        setLoading(true);
+        try {
+            await setUserSelections(nuevaSeleccion);
+            toast({
+                title: 'Turno cancelado temporalmente',
+                description: `No asistirás a ${horarioActual.day} ${horarioActual.hour} esta semana.`,
+                status: 'info',
+                duration: 3000,
+                isClosable: true,
+            });
+            onClose();
+            onUpdate();
+        } catch (error) {
+            toast({
+                title: 'Error',
+                description: error.response?.data?.message || 'No se pudo cancelar el turno.',
+                status: 'error',
+                duration: 3000,
+                isClosable: true,
+            });
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleCancelarCambioTemporal = async () => {
+        setLoading(true);
+        try {
+            await setUserSelections([]);
+            toast({
+                title: 'Cambio cancelado',
+                description: 'Volviste a tus horarios originales.',
+                status: 'info',
+                duration: 3000,
+                isClosable: true,
+            });
+            onClose();
+            onUpdate();
+        } catch (error) {
+            toast({
+                title: 'Error',
+                description: error.response?.data?.message || 'No se pudo cancelar el cambio temporal.',
+                status: 'error',
+                duration: 3000,
+                isClosable: true,
+            });
+        } finally {
+            setLoading(false);
+        }
+    };
+
+
     return (
         <Modal isOpen={isOpen} onClose={onClose} isCentered>
             <ModalOverlay />
             <ModalContent color="brand.primary" fontWeight="bold">
-                <ModalHeader>Cambiar turno temporalmente</ModalHeader>
+                <ModalHeader>
+                    {esTurnoTemporal ? 'Cancelar turno temporal' : 'Cambiar turno temporalmente'}
+                </ModalHeader>
                 <ModalCloseButton />
+                
                 <ModalBody>
                     {horarioActual && (
                         <Text mb={4}>
-                            Estás intentando cambiar tu turno actual de: <strong>{horarioActual.day} {horarioActual.hour}</strong>
+                            Estás editando tu turno de: <strong>{horarioActual.day} {horarioActual.hour}</strong>
                         </Text>
                     )}
 
-                    <Select placeholder="Nuevo día" onChange={(e) => {
-                        setSelectedDay(e.target.value);
-                        setSelectedHour('');
-                    }}>
-                        {diasDisponibles.map(dia => (
-                            <option key={dia} value={dia}>{dia}</option>
-                        ))}
-                    </Select>
-
-                    {selectedDay && (
-                        <Select mt={4} placeholder="Nuevo horario" onChange={(e) => setSelectedHour(e.target.value)}>
-                            {horasFiltradas.map(hora => {
-                                const key = `${selectedDay}-${hora}`;
-                                const disabled = turnosLlenos.has(key);
-                                return (
-                                    <option key={hora} value={hora} disabled={disabled}>
-                                        {hora} {disabled ? ' (Completo)' : ''}
+                    {!esTurnoTemporal && (
+                        <>
+                            <Text display={!user.pago ? 'block' : 'none'} fontWeight='bold' color='red' mb={4}>
+                                No puedes cambiar tu turno porque no has realizado el pago correspondiente.
+                            </Text>
+                            <Select display={user.pago ? 'block' : 'none' } placeholder="Nuevo día" onChange={(e) => {
+                                setSelectedDay(e.target.value);
+                                setSelectedHour('');
+                            }}>
+                                {diasDisponibles.map(dia => (
+                                    <option key={dia} value={dia} disabled={diasBloqueados.has(dia)}>
+                                        {dia} {diasBloqueados.has(dia) ? ' (Feriado)' : ''}
                                     </option>
-                                );
-                            })}
-                        </Select>
+                                ))}
+                            </Select>
+
+                            {selectedDay && (
+                                <Select display={user.pago ? 'block' : 'none' } mt={4} placeholder="Nuevo horario" onChange={(e) => setSelectedHour(e.target.value)}>
+                                    {horasFiltradas.map(hora => {
+                                        const key = `${selectedDay}-${hora}`;
+                                        const disabled = turnosLlenos.has(key);
+                                        return (
+                                            <option key={hora} value={hora} disabled={disabled}>
+                                                {hora} {disabled ? ' (Completo)' : ''}
+                                            </option>
+                                        );
+                                    })}
+                                </Select>
+                            )}
+                        </>
                     )}
                 </ModalBody>
+
                 <ModalFooter>
                     <Button mr={3} onClick={onClose}>Cancelar</Button>
-                    <Button colorScheme="teal" onClick={handleSave} isLoading={loading}>
-                        {loading ? <Spinner size="sm" /> : 'Guardar cambio'}
-                    </Button>
+
+                    {!esTurnoTemporal && (
+                        <Button display={user.pago ? 'block' : 'none' } mr={3} colorScheme="teal" onClick={handleSave} isLoading={loading}>
+                            {loading ? <Spinner size="sm" /> : 'Guardar cambio'}
+                        </Button>
+                    )}
+
+                    {!esTurnoTemporal && (
+                        <Button 
+                            colorScheme="red" 
+                            variant="outline" 
+                            onClick={handleBorrarTurno} 
+                            isLoading={loading}
+                        >
+                            {loading ? <Spinner size="sm" /> : 'Cancelar turno'}
+                        </Button>
+                    )}
+
+                    {esTurnoTemporal && (
+                        <Button
+                            variant="solid"
+                            colorScheme="red"
+                            onClick={handleCancelarCambioTemporal}
+                            isLoading={loading}
+                        >
+                            {loading ? <Spinner size="sm" /> : 'Volver a horarios originales'}
+                        </Button>
+                    )}
                 </ModalFooter>
+
             </ModalContent>
         </Modal>
     );

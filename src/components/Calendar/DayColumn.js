@@ -1,12 +1,16 @@
-import { Box, Heading, VStack } from '@chakra-ui/react';
+import { Box, Heading, VStack, Button, Flex } from '@chakra-ui/react';
 import TimeSlot from './TimeSlot';
 import { horariosPorDia } from '../../utils/horarios';
 import { useAuth } from '../../context/AuthContext';
 
-const DayColumn = ({ dayName, date, turnos, onNombreClick }) => {
+const DayColumn = ({ dayName, date, turnos, onNombreClick, feriados = [], onMarcarFeriado }) => {
     const horarios = horariosPorDia[dayName.toLowerCase()] || [];
 
+    const fechaISO = new Date(date).toISOString().slice(0, 10);
+    const esFeriado = feriados.some(f => f.date === fechaISO);
+
     const { user } = useAuth();
+    const esAdmin = user?.rol === 'admin';
 
     return (
         <Box
@@ -23,9 +27,26 @@ const DayColumn = ({ dayName, date, turnos, onNombreClick }) => {
                 mb={2}
                 fontSize={{ base: 'md', md: 'lg' }} // tamaño adaptable
                 wordBreak="break-word"
+                color={esFeriado ? 'red.500' : 'inherit'}
             >
-                {dayName === 'Lunes' || dayName === 'Viernes' ? 'FERIADO' : dayName}
+                {esFeriado ? 'FERIADO' : dayName}
             </Heading>
+
+            {esAdmin && !esFeriado && (
+                <Flex
+                    justifyContent='center'
+                    >
+                    <Button
+                        size="xs"
+                        colorScheme="red"
+                        variant="outline"
+                        mb={2}
+                        onClick={() => onMarcarFeriado(fechaISO)}
+                    >
+                        Marcar como feriado
+                    </Button>
+                </Flex>
+            )}
 
             <VStack
                 spacing={2}
