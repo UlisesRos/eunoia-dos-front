@@ -46,10 +46,7 @@ export const marcarFeriado = async (date) => {
 };
 
 export const quitarFeriado = async (date) => {
-    const res = await axios.delete(`${API_URL}/eliminar-feriado`, {
-        ...getAuthHeaders(),
-        data: { date },
-    });
+    const res = await axios.post(`${API_URL}/quitar-feriado`, { date }, getAuthHeaders());
     return res.data;
 };
 
