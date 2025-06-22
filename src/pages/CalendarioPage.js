@@ -1,12 +1,12 @@
 import { Button, Box, Heading, Text, Spinner, Flex, Image } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import { getFilteredWeeks } from '../utils/calendarUtils';
+import { getCurrentWeekDates } from '../utils/calendarUtils';
 import CalendarGrid from '../components/Calendar/CalendarGrid';
 import EditSingleTurnModal from '../components/Modals/EditSingleTurnModal';
 import AdminEditTurnModal from '../components/Modals/AdminEditTurnModal';
 import SelectDaysModal from '../components/Modals/SelectDaysModal';
-import { getFeriados, getTurnosPorHorario, getUserSelections, marcarFeriado } from '../services/calendarAPI';
+import { getFeriados, getTurnosPorHorario, getUserSelections, marcarFeriado, quitarFeriado } from '../services/calendarAPI';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '@chakra-ui/react';
 import logo from '../img/logos/faviconE.png';
@@ -46,17 +46,13 @@ import logo from '../img/logos/faviconE.png';
         // Estado para mes y año seleccionados (por defecto hoy)
         const selectedMonth = today.getMonth();
         const selectedYear = today.getFullYear();
-        const currentWeek = 1;
         const [turnos, setTurnos] = useState([]);
-
+        
         // Modal para seleccionar días y horarios
         const [showSelectModal, setShowSelectModal] = useState(false);
-
-        const filteredWeeks = getFilteredWeeks(selectedMonth, selectedYear);
-        const weekData = filteredWeeks.find(week => week.weekNumber === currentWeek);
-        const weekDates = weekData ? weekData.dates || weekData.weekDates : [];
-    ;
-
+        
+        const weekDates = getCurrentWeekDates();
+        
         const { user, logout } = useAuth();
         const navigate = useNavigate();
         const toast = useToast();
@@ -145,6 +141,29 @@ import logo from '../img/logos/faviconE.png';
                 });
             }
         };
+
+        const handleQuitarFeriado = async (fechaISO) => {
+            try {
+                await quitarFeriado(fechaISO);
+                toast({
+                    title: 'Feriado quitado',
+                    description: `Se quito el feriado del día ${fechaISO}.`,
+                    status: 'info',
+                    duration: 3000,
+                    isClosable: true,
+                });
+                getFeriados().then(setFeriados); // recargar la lista
+            } catch (error) {
+                toast({
+                    title: 'Error',
+                    description: error.response?.data?.message || 'No se pudo quitar el feriado.',
+                    status: 'error',
+                    duration: 3000,
+                    isClosable: true,
+                });
+
+            }
+        }
 
         if (isLoading) {
         return (
@@ -284,7 +303,7 @@ import logo from '../img/logos/faviconE.png';
                         </Text>
                     </Flex>
                 ) : (
-                    <CalendarGrid weekDates={weekDates} turnos={turnos} onNombreClick={handleNombreClick} feriados={feriados} onMarcarFeriado={handleMarcarFeriado} />
+                    <CalendarGrid weekDates={weekDates} turnos={turnos} onNombreClick={handleNombreClick} feriados={feriados} onMarcarFeriado={handleMarcarFeriado} onQuitarFeriado={handleQuitarFeriado} />
                 )}
 
 

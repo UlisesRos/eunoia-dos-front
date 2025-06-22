@@ -3,11 +3,16 @@ import TimeSlot from './TimeSlot';
 import { horariosPorDia } from '../../utils/horarios';
 import { useAuth } from '../../context/AuthContext';
 
-const DayColumn = ({ dayName, date, turnos, onNombreClick, feriados = [], onMarcarFeriado }) => {
+const DayColumn = ({ dayName, date, turnos, onNombreClick, feriados = [], onMarcarFeriado, onQuitarFeriado }) => {
     const horarios = horariosPorDia[dayName.toLowerCase()] || [];
 
     const fechaISO = new Date(date).toISOString().slice(0, 10);
     const esFeriado = feriados.some(f => f.date === fechaISO);
+
+    const fechaObj = new Date(date);
+    const dia = String(fechaObj.getDate()).padStart(2, '0');
+    const mes = String(fechaObj.getMonth() + 1).padStart(2, '0');
+    const fechaFormateada = `${dia}/${mes}`;
 
     const { user } = useAuth();
     const esAdmin = user?.rol === 'admin';
@@ -29,13 +34,30 @@ const DayColumn = ({ dayName, date, turnos, onNombreClick, feriados = [], onMarc
                 wordBreak="break-word"
                 color={esFeriado ? 'red.500' : 'inherit'}
             >
-                {esFeriado ? 'FERIADO' : dayName}
+                {esFeriado ? (
+                    'FERIADO'
+                    ) : (
+                    <>
+                        {dayName}
+                        <br />
+                        {fechaFormateada}
+                    </>
+                    )}
             </Heading>
 
-            {esAdmin && !esFeriado && (
-                <Flex
-                    justifyContent='center'
+            {esAdmin && (
+                <Flex justifyContent="center">
+                    {esFeriado ? (
+                    <Button
+                        size="xs"
+                        colorScheme="red"
+                        variant="outline"
+                        mb={2}
+                        onClick={() => onQuitarFeriado(fechaISO)}
                     >
+                        Quitar feriado
+                    </Button>
+                    ) : (
                     <Button
                         size="xs"
                         colorScheme="red"
@@ -45,6 +67,7 @@ const DayColumn = ({ dayName, date, turnos, onNombreClick, feriados = [], onMarc
                     >
                         Marcar como feriado
                     </Button>
+                    )}
                 </Flex>
             )}
 

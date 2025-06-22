@@ -15,9 +15,18 @@ export const getUserSelections = async () => {
     return res.data;
 };
 
-export const setUserSelections = async (selections) => {
-    const res = await axios.post(`${API_URL}/asignar-turnos`, { selections }, getAuthHeaders());
-    window.location.reload(); 
+export const setUserSelections = async (selections, forzarReset = false) => {
+    const res = await axios.post(`${API_URL}/asignar-turnos`, { selections, forzarReset }, getAuthHeaders());
+    return res.data;
+};
+
+export const resetUserSelections = async () => {
+    const res = await axios.post(`${API_URL}/reset-temporales`, {}, getAuthHeaders());
+    return res.data;
+};
+
+export const cancelarTurnoTemporalmente = async (day, hour) => {
+    const res = await axios.post(`${API_URL}/cancelar-temporalmente`, { day, hour }, getAuthHeaders());
     return res.data;
 };
 
@@ -33,6 +42,14 @@ export const getFeriados = async () => {
 
 export const marcarFeriado = async (date) => {
     const res = await axios.post(`${API_URL}/feriado`, { date }, getAuthHeaders());
+    return res.data;
+};
+
+export const quitarFeriado = async (date) => {
+    const res = await axios.delete(`${API_URL}/feriado`, {
+        ...getAuthHeaders(),
+        data: { date },
+    });
     return res.data;
 };
 

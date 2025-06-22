@@ -1,10 +1,11 @@
 // components/Modals/EditSingleTurnModal.js
 import {
     Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton,
-    ModalBody, ModalFooter, Button, Select, useToast, Spinner, Text
+    ModalBody, ModalFooter, Button, Select, useToast, Spinner, Text,
+    Flex
 } from '@chakra-ui/react';
 import { useState, useEffect } from 'react';
-import { setUserSelections } from '../../services/calendarAPI';
+import { setUserSelections, resetUserSelections, cancelarTurnoTemporalmente } from '../../services/calendarAPI';
 import { useAuth } from '../../context/AuthContext';
 
 const diasDisponibles = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes'];
@@ -117,14 +118,14 @@ export default function EditSingleTurnModal({
     const horasFiltradas = selectedDay ? horasDisponibles[selectedDay] : [];
 
     const handleBorrarTurno = async () => {
-
-        const nuevaSeleccion = userSelections.filter(
-            s => !(s.day === horarioActual.day && s.hour === horarioActual.hour)
+        const confirmacion = window.confirm(
+            `¿Estás seguro de que querés cancelar tu turno de ${horarioActual.day} ${horarioActual.hour} esta semana?`
         );
+        if (!confirmacion) return;
 
         setLoading(true);
         try {
-            await setUserSelections(nuevaSeleccion);
+            await cancelarTurnoTemporalmente(horarioActual.day, horarioActual.hour);
             toast({
                 title: 'Turno cancelado temporalmente',
                 description: `No asistirás a ${horarioActual.day} ${horarioActual.hour} esta semana.`,
@@ -147,10 +148,14 @@ export default function EditSingleTurnModal({
         }
     };
 
+
     const handleCancelarCambioTemporal = async () => {
+        const confirmacion = window.confirm('¿Querés cancelar tus cambios temporales y volver a tus horarios originales?');
+        if (!confirmacion) return;
+
         setLoading(true);
         try {
-            await setUserSelections([]);
+            await resetUserSelections();
             toast({
                 title: 'Cambio cancelado',
                 description: 'Volviste a tus horarios originales.',
@@ -177,7 +182,7 @@ export default function EditSingleTurnModal({
     return (
         <Modal isOpen={isOpen} onClose={onClose} isCentered>
             <ModalOverlay />
-            <ModalContent color="brand.primary" fontWeight="bold">
+            <ModalContent color="brand.primary" fontWeight="bold" w={{ base: '95%', md: 'auto' }}>
                 <ModalHeader>
                     {esTurnoTemporal ? 'Cancelar turno temporal' : 'Cambiar turno temporalmente'}
                 </ModalHeader>
@@ -224,35 +229,49 @@ export default function EditSingleTurnModal({
                 </ModalBody>
 
                 <ModalFooter>
-                    <Button mr={3} onClick={onClose}>Cancelar</Button>
-
-                    {!esTurnoTemporal && (
-                        <Button display={user.pago ? 'block' : 'none' } mr={3} colorScheme="teal" onClick={handleSave} isLoading={loading}>
-                            {loading ? <Spinner size="sm" /> : 'Guardar cambio'}
-                        </Button>
-                    )}
-
-                    {!esTurnoTemporal && (
-                        <Button 
-                            colorScheme="red" 
-                            variant="outline" 
-                            onClick={handleBorrarTurno} 
-                            isLoading={loading}
+                    <Flex
+                        wrap="wrap"
+                        justifyContent="center"
+                        alignItems="center"
+                        rowGap={3}
                         >
-                            {loading ? <Spinner size="sm" /> : 'Cancelar turno'}
-                        </Button>
-                    )}
+                        <Button mr={3} onClick={onClose}>Cancelar</Button>
 
-                    {esTurnoTemporal && (
-                        <Button
-                            variant="solid"
-                            colorScheme="red"
-                            onClick={handleCancelarCambioTemporal}
-                            isLoading={loading}
-                        >
-                            {loading ? <Spinner size="sm" /> : 'Volver a horarios originales'}
-                        </Button>
-                    )}
+                        {!esTurnoTemporal && (
+                            <Button
+                                display={user.pago ? 'block' : 'none'}
+                                textAlign='center'
+                                mr={3}
+                                colorScheme="teal"
+                                onClick={handleSave}
+                                isLoading={loading}
+                                >
+                                    {loading ? <Spinner size="sm" /> : 'Guardar Cambio'}
+                                </Button>
+                        )}
+
+                        {!esTurnoTemporal && (
+                            <Button 
+                                colorScheme="red" 
+                                variant="outline" 
+                                onClick={handleBorrarTurno} 
+                                isLoading={loading}
+                            >
+                                {loading ? <Spinner size="sm" /> : 'Cancelar turno'}
+                            </Button>
+                        )}
+
+                        {esTurnoTemporal && (
+                            <Button
+                                variant="solid"
+                                colorScheme="red"
+                                onClick={handleCancelarCambioTemporal}
+                                isLoading={loading}
+                            >
+                                {loading ? <Spinner size="sm" /> : 'Volver a horarios originales'}
+                            </Button>
+                        )}
+                    </Flex>
                 </ModalFooter>
 
             </ModalContent>

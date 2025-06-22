@@ -1,7 +1,7 @@
 import { Grid, Box } from '@chakra-ui/react';
 import DayColumn from './DayColumn';
 
-const CalendarGrid = ({ weekDates, turnos, onNombreClick, feriados = [], onMarcarFeriado }) => {
+const CalendarGrid = ({ weekDates, turnos, onNombreClick, feriados = [], onMarcarFeriado, onQuitarFeriado }) => {
     return (
         <Box overflowX="auto">
             <Grid
@@ -19,6 +19,7 @@ const CalendarGrid = ({ weekDates, turnos, onNombreClick, feriados = [], onMarca
                         onNombreClick={onNombreClick}
                         feriados={feriados}
                         onMarcarFeriado={onMarcarFeriado}
+                        onQuitarFeriado={onQuitarFeriado}
                     />                
                 ))}
             </Grid> 

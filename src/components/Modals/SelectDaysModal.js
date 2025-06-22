@@ -112,6 +112,7 @@ import { useAuth } from '../../context/AuthContext';
                 });
                 onClose();
                 onUpdate();
+                window.location.reload(); // Recargar la página para reflejar los cambios
             } catch (error) {
                 toast({
                     title: 'Error',
