@@ -5,7 +5,7 @@ import {
     Flex
 } from '@chakra-ui/react';
 import { useState, useEffect } from 'react';
-import { setUserSelections, resetUserSelections, cancelarTurnoTemporalmente } from '../../services/calendarAPI';
+import { setUserSelections, resetUserSelections, cancelarTurnoTemporalmente, guardarTurnoParaRecuperar } from '../../services/calendarAPI';
 import { useAuth } from '../../context/AuthContext';
 
 const diasDisponibles = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes'];
@@ -117,17 +117,45 @@ export default function EditSingleTurnModal({
 
     const horasFiltradas = selectedDay ? horasDisponibles[selectedDay] : [];
 
-    const handleBorrarTurno = async () => {
-        const confirmacion = window.confirm(
-            `¿Estás seguro de que querés cancelar tu turno de ${horarioActual.day} ${horarioActual.hour} esta semana?`
-        );
+    const handleCancelarYGuardar = async () => {
+        const confirmacion = window.confirm(`¿Querés guardar el turno de ${horarioActual.day} ${horarioActual.hour} para usarlo en otra semana?`);
+        if (!confirmacion) return;
+
+        setLoading(true);
+        try {
+            await guardarTurnoParaRecuperar(horarioActual.day, horarioActual.hour);
+            await cancelarTurnoTemporalmente(horarioActual.day, horarioActual.hour);
+            toast({
+                title: 'Turno guardado',
+                description: 'Podrás recuperar este turno más adelante.',
+                status: 'info',
+                duration: 3000,
+                isClosable: true,
+            });
+            onClose();
+            onUpdate();
+        } catch (error) {
+            toast({
+                title: 'Error',
+                description: error.response?.data?.message || 'No se pudo guardar el turno.',
+                status: 'error',
+                duration: 3000,
+                isClosable: true,
+            });
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleCancelarSinRecuperar = async () => {
+        const confirmacion = window.confirm(`¿Estás seguro de que querés cancelar tu turno de ${horarioActual.day} ${horarioActual.hour} esta semana sin guardarlo?`);
         if (!confirmacion) return;
 
         setLoading(true);
         try {
             await cancelarTurnoTemporalmente(horarioActual.day, horarioActual.hour);
             toast({
-                title: 'Turno cancelado temporalmente',
+                title: 'Turno cancelado',
                 description: `No asistirás a ${horarioActual.day} ${horarioActual.hour} esta semana.`,
                 status: 'info',
                 duration: 3000,
@@ -147,7 +175,6 @@ export default function EditSingleTurnModal({
             setLoading(false);
         }
     };
-
 
     const handleCancelarCambioTemporal = async () => {
         const confirmacion = window.confirm('¿Querés cancelar tus cambios temporales y volver a tus horarios originales?');
@@ -178,17 +205,20 @@ export default function EditSingleTurnModal({
         }
     };
 
-
     return (
         <Modal isOpen={isOpen} onClose={onClose} isCentered>
             <ModalOverlay />
             <ModalContent color="brand.primary" fontWeight="bold" w={{ base: '95%', md: 'auto' }}>
-                <ModalHeader>
+                <ModalHeader
+                    textAlign='center'
+                    >
                     {esTurnoTemporal ? 'Cancelar turno temporal' : 'Cambiar turno temporalmente'}
                 </ModalHeader>
                 <ModalCloseButton />
                 
-                <ModalBody>
+                <ModalBody
+                    textAlign='center'
+                    >
                     {horarioActual && (
                         <Text mb={4}>
                             Estás editando tu turno de: <strong>{horarioActual.day} {horarioActual.hour}</strong>
@@ -251,14 +281,33 @@ export default function EditSingleTurnModal({
                         )}
 
                         {!esTurnoTemporal && (
-                            <Button 
-                                colorScheme="red" 
-                                variant="outline" 
-                                onClick={handleBorrarTurno} 
-                                isLoading={loading}
-                            >
-                                {loading ? <Spinner size="sm" /> : 'Cancelar turno'}
-                            </Button>
+                            <Flex
+                                justifyContent='center'
+                                alignItems='center'
+                                wrap='wrap'
+                                w='90%'
+                                columnGap={2}
+                                rowGap={2}
+                                >
+                                <Button 
+                                    colorScheme="red" 
+                                    variant="outline" 
+                                    onClick={handleCancelarSinRecuperar} 
+                                    isLoading={loading}
+                                    >
+                                    {loading ? <Spinner size="sm" /> : 'Cancelar sin recuperar'}
+                                </Button>
+
+                                <Button 
+                                    colorScheme="blue" 
+                                    variant="outline" 
+                                    onClick={handleCancelarYGuardar} 
+                                    isLoading={loading}
+                                    >
+                                    {loading ? <Spinner size="sm" /> : 'Guardar para recuperar'}
+                                </Button>
+                            </Flex>
+
                         )}
 
                         {esTurnoTemporal && (

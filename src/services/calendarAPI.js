@@ -50,4 +50,21 @@ export const quitarFeriado = async (date) => {
     return res.data;
 };
 
+export const guardarTurnoParaRecuperar = async (day, hour) => {
+    const res = await axios.post(`${API_URL}/guardar-para-recuperar`, { day, hour }, getAuthHeaders());
+    setTimeout(() => {
+        window.location.reload();
+    }, 1000); 
+    return res.data;
+};
+
+export const listarTurnosRecuperables = async () => {
+    const res = await axios.get(`${API_URL}/turnos-recuperables`, getAuthHeaders());
+    return res.data;
+};
+
+export const usarTurnoRecuperado = async (turnId, day, hour) => {
+    const res = await axios.post(`${API_URL}/usar-turno-recuperado`, { turnId, day, hour }, getAuthHeaders());
+    return res.data;
+};
 

@@ -17,6 +17,7 @@ const DayColumn = ({ dayName, date, turnos, onNombreClick, feriados = [], onMarc
     const { user } = useAuth();
     const esAdmin = user?.rol === 'admin';
 
+
     return (
         <Box
         borderWidth="1px"

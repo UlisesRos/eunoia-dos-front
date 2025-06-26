@@ -87,25 +87,23 @@ const TablaUsuariosPilates = () => {
   };
 
   const handleTogglePago = async (userId, currentPago) => {
-  try {
-    const updatedPago = !currentPago;
+    try {
+      const updatedPago = !currentPago;
 
-    // Petición al backend que devuelve el usuario actualizado
-    const res = await axios.patch(`${backendUrl}/api/usuarios/updatePago/${userId}`, {
-      pago: updatedPago,
-    });
+      // Petición al backend que devuelve el usuario actualizado
+      const res = await axios.patch(`${backendUrl}/api/usuarios/updatePago/${userId}`, {
+        pago: updatedPago,
+      });
 
-    // Actualizar el estado local con los datos completos del usuario actualizado
-    setUsuarios((prev) =>
-      prev.map((u) => (u._id === userId ? res.data : u))
-    );
-  } catch (error) {
-    console.error('Error al actualizar pago:', error);
-    alert('No se pudo actualizar el estado de pago.');
-  }
+      // Actualizar el estado local con los datos completos del usuario actualizado
+      setUsuarios((prev) =>
+        prev.map((u) => (u._id === userId ? res.data : u))
+      );
+    } catch (error) {
+      console.error('Error al actualizar pago:', error);
+      alert('No se pudo actualizar el estado de pago.');
+    }
 };
-
-
 
   return (
     <Box
@@ -177,6 +175,15 @@ const TablaUsuariosPilates = () => {
               <option value="noPagado">No Pagaron</option>
             </select>
           </Flex>
+
+            <Heading
+              textAlign='center'
+              fontSize='lg'
+              color='green'
+              mb={3}
+              >
+              {usuarios.filter((user) => user.rol !== 'admin').length} Usuarios Registrados
+            </Heading>
 
           <TableContainer>
             <Table

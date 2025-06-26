@@ -86,6 +86,47 @@ export default function AdminEditTurnModal({
         }
     };
 
+    const handleAdminCancelarTurno = async () => {
+    const confirmacion = window.confirm(
+        `¿Querés cancelar el turno de ${selectedUser?.nombre.trim()} el ${horarioActual?.day} a las ${horarioActual?.hour} solo por esta semana?`
+    );
+    if (!confirmacion) return;
+
+    setLoading(true);
+    try {
+        await axios.post(`${API_URL}/admin-cancelar-temporalmente`, {
+            userFullName: selectedUser?.nombre.trim(), // ej: "María López"
+            day: horarioActual?.day,
+            hour: horarioActual?.hour
+        }, {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem('token')}`,
+            }
+        });
+
+        toast({
+            title: 'Turno cancelado',
+            description: `Se canceló el turno de ${selectedUser?.nombre.trim()} para esta semana.`,
+            status: 'info',
+            duration: 3000,
+            isClosable: true,
+        });
+
+        onClose();
+        onUpdate();
+    } catch (err) {
+        toast({
+            title: 'Error',
+            description: err.response?.data?.message || 'No se pudo cancelar el turno.',
+            status: 'error',
+            duration: 3000,
+            isClosable: true,
+        });
+    } finally {
+        setLoading(false);
+    }
+};
+
     const horasFiltradas = selectedDay ? horasDisponibles[selectedDay] : [];
 
     const turnosLlenos = new Set(
@@ -129,10 +170,18 @@ export default function AdminEditTurnModal({
                         </Select>
                     )}
                 </ModalBody>
-                <ModalFooter>
-                    <Button mr={3} onClick={onClose}>Cancelar</Button>
+                <ModalFooter display='flex' flexWrap='wrap' justifyContent='center' alignItems='center' gap={3} w='100%'>
+                    <Button onClick={onClose}>Cancelar</Button>
                     <Button colorScheme="teal" onClick={handleSave} isLoading={loading}>
                         {loading ? <Spinner size="sm" /> : 'Guardar cambio'}
+                    </Button>
+                    <Button
+                        colorScheme="red"
+                        variant="outline"
+                        onClick={handleAdminCancelarTurno}
+                        isLoading={loading}
+                        >
+                        {loading ? <Spinner size="sm" /> : 'Cancelar Turno'}
                     </Button>
                 </ModalFooter>
             </ModalContent>

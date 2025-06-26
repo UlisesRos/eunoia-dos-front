@@ -6,7 +6,10 @@ import CalendarGrid from '../components/Calendar/CalendarGrid';
 import EditSingleTurnModal from '../components/Modals/EditSingleTurnModal';
 import AdminEditTurnModal from '../components/Modals/AdminEditTurnModal';
 import SelectDaysModal from '../components/Modals/SelectDaysModal';
-import { getFeriados, getTurnosPorHorario, getUserSelections, marcarFeriado, quitarFeriado } from '../services/calendarAPI';
+import RecuperarTurnoModal from '../components/Modals/RecuperarTurnoModal';
+import InfoModal from '../components/Modals/InfoModal';
+import AdminInfoModal from '../components/Modals/AdminInfoModal';
+import { getFeriados, getTurnosPorHorario, getUserSelections, marcarFeriado, quitarFeriado, listarTurnosRecuperables } from '../services/calendarAPI';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '@chakra-ui/react';
 import logo from '../img/logos/faviconE.png';
@@ -28,7 +31,10 @@ import logo from '../img/logos/faviconE.png';
         const [showAdminModal, setShowAdminModal] = useState(false);
         const [selectedUsuario, setSelectedUsuario] = useState(null);
         const [feriados, setFeriados] = useState([]);
-
+        const [showRecuperarModal, setShowRecuperarModal] = useState(false);
+        const [turnosRecuperables, setTurnosRecuperables] = useState([]);
+        const [showInfoModal, setShowInfoModal] = useState(false);
+        
         useEffect(() => {
             getFeriados()
                 .then(setFeriados)
@@ -43,6 +49,7 @@ import logo from '../img/logos/faviconE.png';
             return () => clearTimeout(timer);
         }, []);
 
+        
         // Estado para mes y año seleccionados (por defecto hoy)
         const selectedMonth = today.getMonth();
         const selectedYear = today.getFullYear();
@@ -57,6 +64,13 @@ import logo from '../img/logos/faviconE.png';
         const navigate = useNavigate();
         const toast = useToast();
 
+        useEffect(() => {
+            if (!user) return;
+            listarTurnosRecuperables()
+                .then(setTurnosRecuperables)
+                .catch(() => setTurnosRecuperables([]));
+        }, [user]);
+        
         // Logout del usuario
         const handleLogout = () => {
             toast({
@@ -111,6 +125,7 @@ import logo from '../img/logos/faviconE.png';
 
         const handleNombreClick = (dia, hora, clickedUser) => {
             if (user.rol === 'admin') {
+                console.log(clickedUser);
                 setSelectedUsuario(clickedUser);
                 setHorarioActual({ day: dia, hour: hora });
                 setShowAdminModal(true);
@@ -247,13 +262,47 @@ import logo from '../img/logos/faviconE.png';
                             Cerrar sesión
                         </Button>
                         
-                        <Button display={user.rol === 'usuario' ? 'block' : 'none'} w={{ base: '80%', md: 'auto' }} fontSize={{ base: 'sm', md: 'md' }} colorScheme="red" onClick={() => navigate('/perfil')} border='solid 2px' borderColor='brand.secondary' bg='brand.primary' color='brand.secondary' fontWeight='bold'>
-                            Mi perfil
+                        <Flex
+                            flexDir={{ base: 'column', md: 'row' }}
+                            justifyContent={['space-between', 'end', 'end']}
+                            alignItems='center'
+                            w='100%'
+                            gap={4}
+                            columnGap={3}
+                            display={user.rol === 'usuario' ? 'flex' : 'none'}
+                            >
+                            <Button w={{ base: '80%', md: 'auto' }} fontSize={{ base: 'sm', md: 'md' }} colorScheme="red" onClick={() => navigate('/perfil')} border='solid 2px' borderColor='brand.secondary' bg='brand.primary' color='brand.secondary' fontWeight='bold'>
+                                Mi perfil
+                            </Button>
+
+                            {turnosRecuperables.length > 0 && (
+                                <Flex justify="center" w={['100%', '100%', 'auto']}>
+                                    <Button w={{ base: '80%', md: 'auto' }} fontSize={{ base: 'sm', md: 'md' }} colorScheme="red" border='solid 2px' borderColor='brand.secondary' bg='brand.primary' color='brand.secondary' fontWeight='bold' onClick={() => setShowRecuperarModal(true)}>
+                                        Recuperar turno pendiente
+                                    </Button>
+                                </Flex>
+                            )}
+                        </Flex>
+                        
+                        <Button
+                            w={{ base: '80%', md: 'auto' }}
+                            fontSize={{ base: 'sm', md: 'md' }}
+                            colorScheme="blue"
+                            onClick={() => setShowInfoModal(true)}
+                            border="solid 2px"
+                            borderColor="brand.secondary"
+                            bg="brand.primary"
+                            color="brand.secondary"
+                            fontWeight="bold"
+                            display={user.rol === 'admin' ? 'block' : 'none'}
+                        >
+                            Crear novedad
                         </Button>
                         
                         <Button display={user.rol === 'admin' ? 'block' : 'none'} w={{ base: '80%', md: 'auto' }} fontSize={{ base: 'sm', md: 'md' }} colorScheme="red" onClick={() => navigate('/registro')} border='solid 2px' borderColor='brand.secondary' bg='brand.primary' color='brand.secondary' fontWeight='bold'>
                             Registro de clientes
                         </Button>
+
 
                     </Flex>
                 </Flex>
@@ -358,6 +407,34 @@ import logo from '../img/logos/faviconE.png';
                     }}
                 />
 
+                <RecuperarTurnoModal
+                    isOpen={showRecuperarModal}
+                    onClose={() => setShowRecuperarModal(false)}
+                    turnosRecuperables={turnosRecuperables}
+                    turnosOcupados={turnos}
+                    nombreUsuario={`${user?.nombre} ${user?.apellido}`}
+                    onUpdate={() => {
+                        getTurnosPorHorario().then(setTurnos);
+                        listarTurnosRecuperables().then(setTurnosRecuperables);
+                        getUserSelections().then(data => {
+                        setUserSelectionsState(data.selections || []);
+                        setCambiosRestantes(2 - (data.changesThisMonth || 0));
+                        });
+                    }}
+                    horasDisponiblesPorDia={{
+                        Lunes: ['08:00', '09:00', '10:00', '16:00', '17:00', '18:00', '19:00', '20:00'],
+                        Martes: ['07:00', '08:00', '09:00', '10:00', '16:00', '17:00', '18:00', '19:00', '20:00'],
+                        Miércoles: ['08:00', '09:00', '17:00', '18:00', '19:00', '20:00'],
+                        Jueves: ['07:00', '08:00', '09:00', '10:00', '16:00', '17:00', '18:00', '19:00', '20:00'],
+                        Viernes: ['08:00', '09:00', '10:00', '17:00', '18:00', '19:00']
+                    }}
+                />
+
+                {user?.rol === 'usuario' && (
+                    <InfoModal />
+                )}
+
+
                 {user?.rol === 'usuario' && userSelections.length === 0 && (
                     <Box
                         position="fixed"
@@ -386,9 +463,15 @@ import logo from '../img/logos/faviconE.png';
                         >
                             Asignar turno
                         </Button>
+
                     </Box>
                 )}
-
+                
+                <AdminInfoModal
+                    isOpen={showInfoModal}
+                    onClose={() => setShowInfoModal(false)}
+                    onSuccess={() => {}}
+                />
             </Box>
         );
 };
