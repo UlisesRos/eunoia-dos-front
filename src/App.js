@@ -10,11 +10,13 @@ import AccessDenied from './pages/AccessDenied';
 import ForgotPasswordForm from '../src/components/ForgotPasswordForm';
 import ResetPasswordFrom from '../src/components/ResetPasswordFrom';
 import UserPerfil from './pages/UserPerfil';
+import PagePrincipal from './pages/PagePrincipal';
 
 function App() {
   return (
     <Routes>
-      <Route path='/' element={<Home />} />
+      <Route path='/' element={<PagePrincipal />} />
+      <Route path='/home' element={<Home />} />
       <Route path='/login' element={<Login />} />
       <Route path='/register' element={<Register />} />
       <Route 

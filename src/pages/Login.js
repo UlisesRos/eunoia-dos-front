@@ -154,7 +154,7 @@ const Login = () => {
                             {loading ? '' : 'Ingresar'}
                         </Button>
 
-                        <Button onClick={() => navigate('/')} width="full">
+                        <Button onClick={() => navigate('/home')} width="full">
                             Volver al Inicio
                         </Button>
                     </VStack>

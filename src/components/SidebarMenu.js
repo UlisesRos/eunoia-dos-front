@@ -10,12 +10,10 @@ import {
     IconButton,
     useDisclosure,
     useBreakpointValue,
-    Flex,
-    Image
+    Flex
 } from '@chakra-ui/react';
 import { HamburgerIcon, CloseIcon } from '@chakra-ui/icons';
 import { useNavigate } from 'react-router-dom';
-import logo from '../img/logos/faviconE.png';
 
 const SidebarMenu = () => {
     const { isOpen, onOpen, onClose } = useDisclosure();
@@ -40,17 +38,14 @@ const SidebarMenu = () => {
                     Registrarse
                 </Button>
             </VStack>
-            <Image
-                alignSelf='center'
-                src={logo}
-                objectFit='cover'
-                alt="Logo Eudonia"
-                borderRadius='full'
-                onClick={() => navigate('/')}
-                cursor='pointer'
-                w={['180px', '150px','120px']}
-                mb={[3,3,0]}
-                />
+            
+            <Button
+                as='a'
+                href='https://cadillac-three.vercel.app/'
+                mb={5}
+                >
+                Pilates Cadillac
+            </Button>
         </Flex>
     );
 
