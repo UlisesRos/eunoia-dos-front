@@ -298,14 +298,14 @@ export default function EditSingleTurnModal({
                                     {loading ? <Spinner size="sm" /> : 'Cancelar sin recuperar'}
                                 </Button>
 
-                                <Button 
+{/*  <Button 
                                     colorScheme="blue" 
                                     variant="outline" 
                                     onClick={handleCancelarYGuardar} 
                                     isLoading={loading}
                                     >
                                     {loading ? <Spinner size="sm" /> : 'Guardar para recuperar'}
-                                </Button>
+                                </Button> */ }
                             </Flex>
 
                         )}
