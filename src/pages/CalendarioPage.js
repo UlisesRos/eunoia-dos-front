@@ -9,7 +9,7 @@ import SelectDaysModal from '../components/Modals/SelectDaysModal';
 import RecuperarTurnoModal from '../components/Modals/RecuperarTurnoModal';
 import InfoModal from '../components/Modals/InfoModal';
 import AdminInfoModal from '../components/Modals/AdminInfoModal';
-import { getFeriados, getTurnosPorHorario, getUserSelections, marcarFeriado, quitarFeriado, listarTurnosRecuperables } from '../services/calendarAPI';
+import { getFeriados, getTurnosPorHorario, getUserSelections, marcarFeriado, quitarFeriado, listarTurnosRecuperables, listarTurnosRecuperadosUsados } from '../services/calendarAPI';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '@chakra-ui/react';
 import logo from '../img/logos/faviconE.png';
@@ -111,10 +111,49 @@ import logo from '../img/logos/faviconE.png';
         }, [user]);
 
         useEffect(() => {
-            getTurnosPorHorario()
-                .then(setTurnos)
-                .catch(() => console.error('No se pudieron obtener los turnos.'));
-        }, []);
+            if (!weekDates || weekDates.length === 0) return;
+            console.log("Cargando turnos entre:", weekDates[0].date, "y", weekDates[weekDates.length - 1].date);
+            const fetchTurnos = async () => {
+                try {
+                    const [turnosNormales, turnosRecuperados] = await Promise.all([
+                        getTurnosPorHorario(),
+                        listarTurnosRecuperadosUsados(
+                            weekDates[0].date,
+                            weekDates[weekDates.length - 1].date
+                        )
+                    ]);
+
+                    // Combinamos ambos
+                    const turnosCombinados = [...turnosNormales];
+
+                    // Agregamos los turnos recuperados al array
+                    for (let rec of turnosRecuperados) {
+                        const existente = turnosCombinados.find(
+                            t => t.day === rec.day && t.hour === rec.hour
+                        );
+                        if (existente) {
+                            existente.users.push({
+                                nombre: rec.nombre,
+                                tipo: rec.tipo // 'recuperado'
+                            });
+                        } else {
+                            turnosCombinados.push({
+                                day: rec.day,
+                                hour: rec.hour,
+                                users: [{ nombre: rec.nombre, tipo: rec.tipo }]
+                            });
+                        }
+                    }
+
+                    setTurnos(turnosCombinados);
+                } catch (err) {
+                    console.error('Error al cargar turnos combinados:', err);
+                }
+            };
+
+            fetchTurnos();
+        }, [weekDates]);
+
 
         const estaBloqueadoPorPago = (user) => {
             const hoy = new Date();

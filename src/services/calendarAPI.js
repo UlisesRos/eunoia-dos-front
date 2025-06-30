@@ -68,3 +68,16 @@ export const usarTurnoRecuperado = async (turnId, day, hour) => {
     return res.data;
 };
 
+export const listarTurnosRecuperadosUsados = async (startDate, endDate) => {
+    const res = await axios.get(`${API_URL}/turnos-recuperados-usados`, {
+        ...getAuthHeaders(),
+        params: { startDate, endDate }
+    });
+    return res.data;
+};
+
+export const limpiarTurnosRecuperadosViejos = async () => {
+    const res = await axios.post(`${API_URL}/limpiar-turnos-recuperados-viejos`, {}, getAuthHeaders());
+    return res.data;
+};
+
