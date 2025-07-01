@@ -36,6 +36,7 @@ export default function EditSingleTurnModal({
     const nombreC = `${user.nombre} ${user.apellido}`;
 
     const esTurnoTemporal = horarioActual?.tipo === 'temporal';
+    const estaBloqueadoPorPago = !user.pago && new Date().getDate() > 10;
 
     useEffect(() => {
         if (isOpen) {
@@ -227,10 +228,10 @@ export default function EditSingleTurnModal({
 
                     {!esTurnoTemporal && (
                         <>
-                            <Text display={!user.pago ? 'block' : 'none'} fontWeight='bold' color='red' mb={4}>
+                            <Text display={estaBloqueadoPorPago  ? 'block' : 'none'} fontWeight='bold' color='red' mb={4}>
                                 No puedes cambiar tu turno porque no has realizado el pago correspondiente.
                             </Text>
-                            <Select display={user.pago ? 'block' : 'none' } placeholder="Nuevo día" onChange={(e) => {
+                            <Select display={!estaBloqueadoPorPago ? 'block' : 'none' } placeholder="Nuevo día" onChange={(e) => {
                                 setSelectedDay(e.target.value);
                                 setSelectedHour('');
                             }}>
@@ -242,7 +243,7 @@ export default function EditSingleTurnModal({
                             </Select>
 
                             {selectedDay && (
-                                <Select display={user.pago ? 'block' : 'none' } mt={4} placeholder="Nuevo horario" onChange={(e) => setSelectedHour(e.target.value)}>
+                                <Select display={!estaBloqueadoPorPago ? 'block' : 'none' } mt={4} placeholder="Nuevo horario" onChange={(e) => setSelectedHour(e.target.value)}>
                                     {horasFiltradas.map(hora => {
                                         const key = `${selectedDay}-${hora}`;
                                         const disabled = turnosLlenos.has(key);
@@ -269,7 +270,7 @@ export default function EditSingleTurnModal({
 
                         {!esTurnoTemporal && (
                             <Button
-                                display={user.pago ? 'block' : 'none'}
+                                display={!estaBloqueadoPorPago ? 'block' : 'none'}
                                 textAlign='center'
                                 mr={3}
                                 colorScheme="teal"
