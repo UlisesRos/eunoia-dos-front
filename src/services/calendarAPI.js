@@ -81,3 +81,10 @@ export const limpiarTurnosRecuperadosViejos = async () => {
     return res.data;
 };
 
+export const setOriginalSelections = async (selections) => {
+    setTimeout(() => {
+        window.location.reload();
+    }, 1000); 
+    return await axios.post(`${API_URL}/set-original-selections`, { selections }, getAuthHeaders());
+};
+

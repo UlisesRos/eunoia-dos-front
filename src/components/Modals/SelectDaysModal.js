@@ -1,189 +1,188 @@
-
 import {
-    Modal,
-    ModalOverlay,
-    ModalContent,
-    ModalHeader,
-    ModalBody,
-    ModalFooter,
-    ModalCloseButton,
-    Button,
-    Checkbox,
-    CheckboxGroup,
-    VStack,
-    useToast,
-    Box,
-    Spinner
+    Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton,
+    ModalBody, ModalFooter, Button, useToast, Text, Select, Box, VStack
 } from '@chakra-ui/react';
-import { useEffect, useState } from 'react';
-import { setUserSelections } from '../../services/calendarAPI';
-import { useAuth } from '../../context/AuthContext';
+import { useState, useEffect } from 'react';
+import { setUserSelections, setOriginalSelections } from '../../services/calendarAPI';
 
-    const availableDays = [
-        { day: 'Lunes', hours: ['08:00', '09:00', '10:00', '16:00', '17:00', '18:00', '19:00', '20:00'] },
-        { day: 'Martes', hours: ['07:00', '08:00', '09:00', '10:00', '16:00', '17:00', '18:00', '19:00', '20:00'] },
-        { day: 'Miércoles', hours: ['08:00', '09:00', '17:00', '18:00', '19:00', '20:00'] },
-        { day: 'Jueves', hours: ['07:00', '08:00', '09:00', '10:00', '16:00', '17:00', '18:00', '19:00', '20:00'] },
-        { day: 'Viernes', hours: ['08:00', '09:00', '10:00', '17:00', '18:00', '19:00'] },
-    ];
+const diasDisponibles = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes'];
+const horasDisponibles = {
+    'Lunes': ['08:00', '09:00', '10:00', '16:00', '17:00', '18:00', '19:00', '20:00'],
+    'Martes': ['07:00', '08:00', '09:00', '10:00', '16:00', '17:00', '18:00', '19:00', '20:00'],
+    'Miércoles': ['08:00', '09:00', '17:00', '18:00', '19:00', '20:00'],
+    'Jueves': ['07:00', '08:00', '09:00', '10:00', '16:00', '17:00', '18:00', '19:00', '20:00'],
+    'Viernes': ['08:00', '09:00', '10:00', '17:00', '18:00', '19:00']
+};
 
-    function toKey(day, hour) {
-        return `${day}-${hour}`;
-    }
+export default function SelectDaysModal({
+    isOpen,
+    onClose,
+    diasSemanales,
+    existingSelections = [],
+    turnosOcupados = [],
+    modoOriginal = false,
+    esPrimerIngreso = false,
+    onUpdate
+}) {
+    const toast = useToast();
+    const [selections, setSelections] = useState([]);
+    const [selectedDay, setSelectedDay] = useState('');
+    const [selectedHour, setSelectedHour] = useState('');
 
-    function fromKey(key) {
-    const [day, hour] = key.split('-');
-    return { day, hour };
-    }
+    useEffect(() => {
+        if (isOpen) {
+            setSelections(existingSelections || []);
+            setSelectedDay('');
+            setSelectedHour('');
+        }
+    }, [isOpen, existingSelections]);
 
-    export default function SelectDaysModal({
-            isOpen,
-            onClose,
-            diasSemanales,
-            existingSelections,
-            cambiosRestantes,
-            onUpdate,
-            turnosOcupados = [] 
-        }) {
-        const toast = useToast();
-        const [selectedKeys, setSelectedKeys] = useState(new Set());
-        const [loading, setLoading] = useState(false); // Estado para controlar el loading
+    const turnosLlenos = new Set(
+        turnosOcupados
+            .filter(t => t.users.length >= 7)
+            .map(t => `${t.day}-${t.hour}`)
+    );
 
-        const { user } = useAuth()
+    const handleAgregar = () => {
+        if (!selectedDay || !selectedHour) return;
 
-        const { nombre, apellido } = user
-        const nombreC = `${nombre} ${apellido}`
+        const clave = `${selectedDay}-${selectedHour}`;
+        if (turnosLlenos.has(clave)) {
+            toast({
+                title: 'Turno completo',
+                description: 'Ese horario ya está lleno.',
+                status: 'error',
+                duration: 3000,
+                isClosable: true,
+            });
+            return;
+        }
 
-        const turnosCompletos = new Set(
-            turnosOcupados
-                .filter(t => t.users.length >= 7 && !t.users.includes(nombreC))
-                .map(t => toKey(t.day, t.hour))
-        );
+        const yaExiste = selections.some(s => s.day === selectedDay && s.hour === selectedHour);
+        if (yaExiste) return;
 
-
-        useEffect(() => {
-            if (!isOpen) return;
-            const keys = new Set(existingSelections.map(({ day, hour }) => toKey(day, hour)));
-            setSelectedKeys(keys);
-        }, [isOpen, existingSelections]);
-
-        const toggleSelection = (key) => {
-            const newSelected = new Set(selectedKeys);
-            if (newSelected.has(key)) {
-                newSelected.delete(key);
-            } else {
-            if (newSelected.size >= diasSemanales) {
-                toast({
+        if (selections.length >= diasSemanales) {
+            toast({
                 title: 'Límite alcanzado',
-                description: `Solo puedes seleccionar hasta ${diasSemanales} horarios.`,
+                description: `Solo podés seleccionar ${diasSemanales} turnos.`,
                 status: 'warning',
                 duration: 3000,
                 isClosable: true,
-                });
-                return;
-            }
-            newSelected.add(key);
-            }
-            setSelectedKeys(newSelected);
-        };
+            });
+            return;
+        }
 
-        const handleSave = async () => {
-            setLoading(true); // Activar el estado de loading
-            const selections = Array.from(selectedKeys).map(fromKey);
-            if (cambiosRestantes <= 0) {
-                toast({
-                    title: 'Límite alcanzado',
-                    description: 'Ya alcanzaste el máximo de 2 cambios este mes.',
-                    status: 'info',
-                    duration: 3000,
-                    isClosable: true,
-                });
-                return; 
-            }
+        setSelections([...selections, { day: selectedDay, hour: selectedHour }]);
+    };
 
-            try {
-                await setUserSelections(selections);
+    const handleEliminar = (day, hour) => {
+        const nuevas = selections.filter(s => !(s.day === day && s.hour === hour));
+        setSelections(nuevas);
+    };
+
+    const handleGuardar = async () => {
+        if (selections.length !== diasSemanales) {
+            toast({
+                title: 'Cantidad incorrecta',
+                description: `Debés seleccionar exactamente ${diasSemanales} turnos.`,
+                status: 'warning',
+                duration: 3000,
+                isClosable: true,
+            });
+            return;         
+        }
+
+        try {
+            if (modoOriginal) {
+                await setOriginalSelections(selections);
                 toast({
-                    title: 'Guardado',
-                    description: 'Tus días fueron actualizados.',
+                    title: 'Turnos originales actualizados',
                     status: 'success',
                     duration: 3000,
                     isClosable: true,
                 });
-                onClose();
-                onUpdate();
-                window.location.reload(); // Recargar la página para reflejar los cambios
-            } catch (error) {
+            } else {
+                await setUserSelections(selections);
                 toast({
-                    title: 'Error',
-                    description: error.response?.data?.message || 'No se pudieron guardar los turnos.',
-                    status: 'error',
+                    title: 'Cambio temporal guardado',
+                    status: 'success',
                     duration: 3000,
                     isClosable: true,
                 });
-            } finally {
-                setLoading(false); // Desactivar el estado de loading
             }
-        };
 
-        return (
-            <Modal isOpen={isOpen} onClose={onClose} size="lg" isCentered>
+            onClose();
+            onUpdate?.();
+        } catch (error) {
+            toast({
+                title: 'Error',
+                description: error.response?.data?.message || 'No se pudo guardar la selección.',
+                status: 'error',
+                duration: 3000,
+                isClosable: true,
+            });
+        }
+    };
+
+    return (
+        <Modal isOpen={isOpen} onClose={onClose} isCentered>
             <ModalOverlay />
-            <ModalContent w={{ base: '95%', md: 'auto' }} color='brand.primary' fontWeight='bold'>
-                <ModalHeader>Seleccioná tus días y horarios de entrenamiento</ModalHeader>
+            <ModalContent>
+                <ModalHeader textAlign="center">
+                    {esPrimerIngreso ? 'Elegí tus turnos semanales' : 'Ajustar turnos originales'}
+                </ModalHeader>
                 <ModalCloseButton />
                 <ModalBody>
-                <VStack spacing={4} align="stretch">
-                    {availableDays.map(({ day, hours }) => (
-                    <div key={day} style={{ textAlign: 'left' }}>
-                        <strong>{day}</strong>
-                        <CheckboxGroup>
-                        <VStack align="start" pl={4} mt='10px'>
-                            <Box
-                            display="grid"
-                            gridTemplateColumns={{ base: "repeat(2, 1fr)", md: "repeat(3, 1fr)" }}
-                            gap={2}
-                            w="100%"
-                            >
-                            {hours.map((hour) => {
-                                const key = toKey(day, hour);
-                                const isDisabled = turnosCompletos.has(key);
+                    {esPrimerIngreso ? (
+                        <Text fontWeight="bold" color="teal.500" mb={4} textAlign="center">
+                            Bienvenido/a. Elegí tus turnos semanales permanentes para comenzar.
+                        </Text>
+                    ) : modoOriginal ? (
+                        <Text fontWeight="bold" color="yellow.400" mb={4} textAlign="center">
+                            Tus días semanales cambiaron. Por favor, ajustá tus turnos originales.
+                        </Text>
+                    ) : null}
+
+
+                    <Select placeholder="Día" onChange={(e) => {
+                        setSelectedDay(e.target.value);
+                        setSelectedHour('');
+                    }} mb={3}>
+                        {diasDisponibles.map(d => <option key={d} value={d}>{d}</option>)}
+                    </Select>
+
+                    {selectedDay && (
+                        <Select placeholder="Hora" value={selectedHour} onChange={(e) => setSelectedHour(e.target.value)} mb={3}>
+                            {(horasDisponibles[selectedDay] || []).map(h => {
+                                const lleno = turnosLlenos.has(`${selectedDay}-${h}`);
                                 return (
-                                <Checkbox
-                                    key={key}
-                                    isChecked={selectedKeys.has(key)}
-                                    onChange={() => toggleSelection(key)}
-                                    isDisabled={isDisabled}
-                                    borderRadius="md"
-                                    px={4}
-                                    py={2}
-                                    border="1px solid"
-                                    borderColor={selectedKeys.has(key) ? 'teal.500' : 'gray.300'}
-                                    bg={selectedKeys.has(key) ? 'teal.500' : isDisabled ? 'gray.200' : 'white'}
-                                    color={selectedKeys.has(key) ? 'white' : 'brand.primary'}
-                                    fontWeight="medium"
-                                    _hover={{ bg: isDisabled ? 'gray.200' : selectedKeys.has(key) ? 'teal.600' : 'gray.100' }}
-                                    _checked={{ bg: 'brand.primary', color: 'white', borderColor: 'teal.500' }}
-                                >
-                                    {hour}
-                                </Checkbox>
+                                    <option key={h} value={h} disabled={lleno}>
+                                        {h} {lleno ? '(Lleno)' : ''}
+                                    </option>
                                 );
                             })}
+                        </Select>
+                    )}
+
+                    <Button size="sm" onClick={handleAgregar} mb={4}>
+                        Agregar turno
+                    </Button>
+
+                    <VStack spacing={2} align="start">
+                        {selections.map((s, i) => (
+                            <Box key={i} w="100%" display="flex" justifyContent="space-between" alignItems="center">
+                                <Text>{s.day} - {s.hour}</Text>
+                                <Button size="xs" colorScheme="red" onClick={() => handleEliminar(s.day, s.hour)}>Eliminar</Button>
                             </Box>
-                        </VStack>
-                        </CheckboxGroup>
-                    </div>
-                    ))}
-                </VStack>
+                        ))}
+                    </VStack>
                 </ModalBody>
+
                 <ModalFooter>
-                <Button mr={3} onClick={onClose}>Cancelar</Button>
-                <Button colorScheme="teal" onClick={handleSave}
-                    isLoading={loading}
-                    spinner={<Spinner size='sm' />} 
-                    >{loading ? '' : 'Guardar'}</Button>
+                    <Button onClick={onClose} mr={3}>Cancelar</Button>
+                    <Button colorScheme="teal" onClick={handleGuardar}>Guardar turnos</Button>
                 </ModalFooter>
             </ModalContent>
-            </Modal>
-        );
-    }
+        </Modal>
+    );
+}

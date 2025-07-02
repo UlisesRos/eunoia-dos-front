@@ -34,6 +34,8 @@ import logo from '../img/logos/faviconE.png';
         const [showRecuperarModal, setShowRecuperarModal] = useState(false);
         const [turnosRecuperables, setTurnosRecuperables] = useState([]);
         const [showInfoModal, setShowInfoModal] = useState(false);
+        const [mostrarBannerAjusteOriginal, setMostrarBannerAjusteOriginal] = useState(false);
+        const [esPrimerIngreso, setEsPrimerIngreso] = useState(false);
         
         useEffect(() => {
             getFeriados()
@@ -85,34 +87,53 @@ import logo from '../img/logos/faviconE.png';
             navigate('/');
         };
 
-        // Obtener selecciones y cambios
         useEffect(() => {
             if (!user) return;
 
             getUserSelections()
                 .then((data) => {
-                    const { selections, changesThisMonth } = data;
+                    const { selections, changesThisMonth, originalSelections = [] } = data;
                     setUserSelectionsState(selections || []);
                     setCambiosRestantes(2 - (changesThisMonth || 0));
 
-                    if (!selections || selections.length === 0) {
-                        if (user.rol === 'admin') {
-                            setShowSelectModal(false);
-                            return
-                        }
-                        setShowSelectModal(true);
+                    // ADMIN: nunca ve modal ni banner
+                    if (user.rol === 'admin') {
+                        setShowSelectModal(false);
+                        setMostrarBannerAjusteOriginal(false);
+                        return;
                     }
 
+                    // Usuario común:
+                    const tieneOriginales = originalSelections.length > 0;
+                    const coincideConDias = originalSelections.length === user.diasSemanales;
+
+                    if (!tieneOriginales) {
+                        // Usuario nuevo (primer ingreso)
+                        setEsPrimerIngreso(true);
+                        setShowSelectModal(true);
+                        setMostrarBannerAjusteOriginal(false);
+                    } else if (!coincideConDias) {
+                        // Usuario con turnos originales desajustados
+                        setEsPrimerIngreso(false);
+                        setShowSelectModal(false); // no mostrar modal, solo banner
+                        setMostrarBannerAjusteOriginal(true);
+                    } else {
+                        // Todo en orden
+                        setEsPrimerIngreso(false);
+                        setShowSelectModal(false);
+                        setMostrarBannerAjusteOriginal(false);
+                    }
                 })
                 .catch(() => {
-                    // En caso de error, también mostramos modal para que pueda elegir
-                    setShowSelectModal(true);
+                    if (user?.rol !== 'admin') {
+                        setShowSelectModal(true);
+                    }
                 });
         }, [user]);
 
+
         useEffect(() => {
             if (!weekDates || weekDates.length === 0) return;
-            console.log("Cargando turnos entre:", weekDates[0].date, "y", weekDates[weekDates.length - 1].date);
             const fetchTurnos = async () => {
                 try {
                     const [turnosNormales, turnosRecuperados] = await Promise.all([
@@ -403,15 +424,17 @@ import logo from '../img/logos/faviconE.png';
                     existingSelections={userSelections}
                     cambiosRestantes={cambiosRestantes}
                     turnosOcupados={turnos}
+                    modoOriginal={mostrarBannerAjusteOriginal}
+                    esPrimerIngreso={esPrimerIngreso}
                     onUpdate={() => {
-                        // Cuando el usuario guarda cambios, recargamos las selecciones
-                        getUserSelections()
-                            .then((data) => {
-                                setUserSelectionsState(data.selections || []);
-                                setCambiosRestantes(2 - (data.changesThisMonth || 0));
-                            })
+                        getUserSelections().then((data) => {
+                            setUserSelectionsState(data.selections || []);
+                            setCambiosRestantes(2 - (data.changesThisMonth || 0));
+                        });
+                        getTurnosPorHorario().then(setTurnos);
                     }}
                 />
+
 
                 <EditSingleTurnModal
                     isOpen={showEditModal}
@@ -505,6 +528,38 @@ import logo from '../img/logos/faviconE.png';
 
                     </Box>
                 )}
+
+                {user?.rol === 'usuario' && userSelections && mostrarBannerAjusteOriginal && (
+                    <Box
+                        position="fixed"
+                        bottom="0"
+                        left="0"
+                        w="100%"
+                        bg="rgba(0, 0, 0, 0.85)"
+                        color="white"
+                        py={4}
+                        px={6}
+                        zIndex={1000}
+                        display="flex"
+                        flexDirection={{ base: 'column', md: 'row' }}
+                        justifyContent="space-between"
+                        alignItems="center"
+                        gap={3}
+                        boxShadow="0 -2px 8px rgba(0,0,0,0.3)"
+                    >
+                        <Text fontSize={{ base: 'sm', md: 'md' }} fontWeight="bold">
+                            Tus días semanales han cambiado. Debés ajustar tus turnos originales.
+                        </Text>
+                        <Button
+                            size="sm"
+                            colorScheme="teal"
+                            onClick={() => setShowSelectModal(true)}
+                        >
+                            Ajustar turnos
+                        </Button>
+                    </Box>
+                )}
+
                 
                 <AdminInfoModal
                     isOpen={showInfoModal}
