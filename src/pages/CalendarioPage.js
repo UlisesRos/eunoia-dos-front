@@ -9,7 +9,7 @@ import SelectDaysModal from '../components/Modals/SelectDaysModal';
 import RecuperarTurnoModal from '../components/Modals/RecuperarTurnoModal';
 import InfoModal from '../components/Modals/InfoModal';
 import AdminInfoModal from '../components/Modals/AdminInfoModal';
-import { getFeriados, getTurnosPorHorario, getUserSelections, marcarFeriado, quitarFeriado, listarTurnosRecuperables, listarTurnosRecuperadosUsados } from '../services/calendarAPI';
+import { getFeriados, getTurnosPorHorario, getUserSelections, marcarFeriado, quitarFeriado, listarTurnosRecuperables, listarTodosLosTurnosRecuperadosUsados } from '../services/calendarAPI';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '@chakra-ui/react';
 import logo from '../img/logos/faviconE.png';
@@ -138,7 +138,7 @@ import logo from '../img/logos/faviconE.png';
                 try {
                     const [turnosNormales, turnosRecuperados] = await Promise.all([
                         getTurnosPorHorario(),
-                        listarTurnosRecuperadosUsados(
+                        listarTodosLosTurnosRecuperadosUsados(
                             weekDates[0].date,
                             weekDates[weekDates.length - 1].date
                         )

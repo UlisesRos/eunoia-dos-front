@@ -76,6 +76,12 @@ export const listarTurnosRecuperadosUsados = async (startDate, endDate) => {
     return res.data;
 };
 
+export const listarTodosLosTurnosRecuperadosUsados = async (startDate, endDate) => {
+    const response = await axios.get(`${API_URL}/turnos-recuperados-todos?startDate=${startDate}&endDate=${endDate}`, getAuthHeaders());
+    return response.data;
+};
+
+
 export const limpiarTurnosRecuperadosViejos = async () => {
     const res = await axios.post(`${API_URL}/limpiar-turnos-recuperados-viejos`, {}, getAuthHeaders());
     return res.data;
