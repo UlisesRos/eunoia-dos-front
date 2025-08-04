@@ -127,6 +127,46 @@ export default function AdminEditTurnModal({
     }
 };
 
+const handleResetToOriginals = async () => {
+    const confirmacion = window.confirm(
+        `¿Querés eliminar todos los turnos temporales de ${selectedUser?.nombre.trim()} y devolverle el cambio mensual?`
+    );
+    if (!confirmacion) return;
+
+    setLoading(true);
+    try {
+        await axios.post(`${API_URL}/admin-reset-a-originales`, {
+            userFullName: selectedUser?.nombre.trim()
+        }, {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem('token')}`,
+            }
+        });
+
+        toast({
+            title: 'Restaurado',
+            description: `Se restauraron los turnos originales de ${selectedUser?.nombre.trim()}.`,
+            status: 'success',
+            duration: 3000,
+            isClosable: true,
+        });
+
+        onClose();
+        onUpdate();
+    } catch (err) {
+        toast({
+            title: 'Error',
+            description: err.response?.data?.message || 'No se pudo restaurar los turnos.',
+            status: 'error',
+            duration: 3000,
+            isClosable: true,
+        });
+    } finally {
+        setLoading(false);
+    }
+};
+
+
     const horasFiltradas = selectedDay ? horasDisponibles[selectedDay] : [];
 
     const turnosLlenos = new Set(
@@ -181,8 +221,17 @@ export default function AdminEditTurnModal({
                         onClick={handleAdminCancelarTurno}
                         isLoading={loading}
                         >
-                        {loading ? <Spinner size="sm" /> : 'Cancelar Turno'}
+                            {loading ? <Spinner size="sm" /> : 'Cancelar Turno'}
                     </Button>
+                    <Button
+                        colorScheme="yellow"
+                        variant="outline"
+                        onClick={handleResetToOriginals}
+                        isLoading={loading}
+                        >
+                            {loading ? <Spinner size="sm" /> : 'Restaurar a originales'}
+                        </Button>
+
                 </ModalFooter>
             </ModalContent>
         </Modal>
