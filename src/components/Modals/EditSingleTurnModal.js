@@ -5,7 +5,7 @@ import {
     Flex
 } from '@chakra-ui/react';
 import { useState, useEffect } from 'react';
-import { setUserSelections, resetUserSelections, cancelarTurnoTemporalmente, guardarTurnoParaRecuperar } from '../../services/calendarAPI';
+import { setUserSelections, resetUserSelections, cancelarTurnoTemporalmente, guardarTurnoParaRecuperar, usuarioEliminarTurnoRecuperado } from '../../services/calendarAPI';
 import { useAuth } from '../../context/AuthContext';
 
 const diasDisponibles = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes'];
@@ -206,125 +206,187 @@ export default function EditSingleTurnModal({
         }
     };
 
+    const handleEliminarTurnoRecuperado = async () => {
+        const confirmacion = window.confirm(`¿Querés eliminar tu turno recuperado de ${horarioActual.day} ${horarioActual.hour}?`);
+        if (!confirmacion) return;
+
+        setLoading(true);
+        try {
+            await usuarioEliminarTurnoRecuperado(horarioActual.day, horarioActual.hour);
+            toast({
+                title: 'Turno recuperado eliminado',
+                description: 'Podrás volver a usar este turno más adelante.',
+                status: 'success',
+                duration: 3000,
+                isClosable: true,
+            });
+            onClose();
+            onUpdate();
+        } catch (error) {
+            toast({
+                title: 'Error',
+                description: error.response?.data?.message || 'No se pudo eliminar el turno recuperado.',
+                status: 'error',
+                duration: 3000,
+                isClosable: true,
+            });
+        } finally {
+            setLoading(false);
+        }
+    };
+
     return (
         <Modal isOpen={isOpen} onClose={onClose} isCentered>
             <ModalOverlay />
-            <ModalContent color="brand.primary" fontWeight="bold" w={{ base: '95%', md: 'auto' }}>
-                <ModalHeader
-                    textAlign='center'
-                    >
-                    {esTurnoTemporal ? 'Cancelar turno temporal' : 'Cambiar turno temporalmente'}
-                </ModalHeader>
-                <ModalCloseButton />
-                
-                <ModalBody
-                    textAlign='center'
-                    >
-                    {horarioActual && (
-                        <Text mb={4}>
-                            Estás editando tu turno de: <strong>{horarioActual.day} {horarioActual.hour}</strong>
-                        </Text>
-                    )}
-
-                    {!esTurnoTemporal && (
-                        <>
-                            <Text display={estaBloqueadoPorPago  ? 'block' : 'none'} fontWeight='bold' color='red' mb={4}>
-                                No puedes cambiar tu turno porque no has realizado el pago correspondiente.
-                            </Text>
-                            <Select display={!estaBloqueadoPorPago ? 'block' : 'none' } placeholder="Nuevo día" onChange={(e) => {
-                                setSelectedDay(e.target.value);
-                                setSelectedHour('');
-                            }}>
-                                {diasDisponibles.map(dia => (
-                                    <option key={dia} value={dia} disabled={diasBloqueados.has(dia)}>
-                                        {dia} {diasBloqueados.has(dia) ? ' (Feriado)' : ''}
-                                    </option>
-                                ))}
-                            </Select>
-
-                            {selectedDay && (
-                                <Select display={!estaBloqueadoPorPago ? 'block' : 'none' } mt={4} placeholder="Nuevo horario" onChange={(e) => setSelectedHour(e.target.value)}>
-                                    {horasFiltradas.map(hora => {
-                                        const key = `${selectedDay}-${hora}`;
-                                        const disabled = turnosLlenos.has(key);
-                                        return (
-                                            <option key={hora} value={hora} disabled={disabled}>
-                                                {hora} {disabled ? ' (Completo)' : ''}
-                                            </option>
-                                        );
-                                    })}
-                                </Select>
-                            )}
-                        </>
-                    )}
-                </ModalBody>
-
-                <ModalFooter>
-                    <Flex
-                        wrap="wrap"
-                        justifyContent="center"
-                        alignItems="center"
-                        rowGap={3}
-                        >
-                        <Button mr={3} onClick={onClose}>Cancelar</Button>
-
-                        {!esTurnoTemporal && (
-                            <Button
-                                display={!estaBloqueadoPorPago ? 'block' : 'none'}
-                                textAlign='center'
-                                mr={3}
-                                colorScheme="teal"
-                                onClick={handleSave}
-                                isLoading={loading}
-                                >
-                                    {loading ? <Spinner size="sm" /> : 'Guardar Cambio'}
-                                </Button>
-                        )}
-
-                        {!esTurnoTemporal && (
-                            <Flex
-                                justifyContent='center'
-                                alignItems='center'
-                                wrap='wrap'
-                                w='90%'
-                                columnGap={2}
-                                rowGap={2}
-                                >
-                                <Button 
-                                    colorScheme="red" 
-                                    variant="outline" 
-                                    onClick={handleCancelarSinRecuperar} 
-                                    isLoading={loading}
-                                    >
-                                    {loading ? <Spinner size="sm" /> : 'Cancelar sin recuperar'}
-                                </Button>
-
-                                <Button 
-                                    colorScheme="blue" 
-                                    variant="outline" 
-                                    onClick={handleCancelarYGuardar} 
-                                    isLoading={loading}
-                                    >
-                                    {loading ? <Spinner size="sm" /> : 'Guardar para recuperar'}
-                                </Button>
-                            </Flex>
-
-                        )}
-
-                        {esTurnoTemporal && (
-                            <Button
-                                variant="solid"
-                                colorScheme="red"
-                                onClick={handleCancelarCambioTemporal}
-                                isLoading={loading}
+            {
+                horarioActual?.tipo === 'recuperado' ? (
+                    <ModalContent color="brand.primary" fontWeight="bold" w={{ base: '95%', md: 'auto' }}>
+                        <ModalHeader
+                            textAlign='center'
                             >
-                                {loading ? <Spinner size="sm" /> : 'Volver a horarios originales'}
-                            </Button>
-                        )}
-                    </Flex>
-                </ModalFooter>
+                            Eliminar turno recuperado
+                        </ModalHeader>
+                        <ModalFooter>
+                            <Flex
+                                wrap="wrap"
+                                justifyContent="center"
+                                alignItems="center"
+                                rowGap={3}
+                                >
+                                <Button mr={3} onClick={onClose}>Cancelar</Button>
 
-            </ModalContent>
+                                <Button
+                                    display={!estaBloqueadoPorPago ? 'block' : 'none'}
+                                    textAlign='center'
+                                    mr={3}
+                                    colorScheme="red"
+                                    onClick={handleEliminarTurnoRecuperado}
+                                    isLoading={loading}
+                                    >
+                                        {loading ? <Spinner size="sm" /> : 'Eliminar Turno Recuperado'}
+                                    </Button>
+                            </Flex>
+                        </ModalFooter>
+                    </ModalContent>
+                ) : 
+                ( 
+                    <ModalContent color="brand.primary" fontWeight="bold" w={{ base: '95%', md: 'auto' }}>
+                        <ModalHeader
+                            textAlign='center'
+                            >
+                            {esTurnoTemporal ? 'Cancelar turno temporal' : 'Cambiar turno temporalmente'}
+                        </ModalHeader>
+                        <ModalCloseButton />
+                        
+                        <ModalBody
+                            textAlign='center'
+                            >
+                            {horarioActual && (
+                                <Text mb={4}>
+                                    Estás editando tu turno de: <strong>{horarioActual.day} {horarioActual.hour}</strong>
+                                </Text>
+                            )}
+
+                            {!esTurnoTemporal && (
+                                <>
+                                    <Text display={estaBloqueadoPorPago  ? 'block' : 'none'} fontWeight='bold' color='red' mb={4}>
+                                        No puedes cambiar tu turno porque no has realizado el pago correspondiente.
+                                    </Text>
+                                    <Select display={!estaBloqueadoPorPago ? 'block' : 'none' } placeholder="Nuevo día" onChange={(e) => {
+                                        setSelectedDay(e.target.value);
+                                        setSelectedHour('');
+                                    }}>
+                                        {diasDisponibles.map(dia => (
+                                            <option key={dia} value={dia} disabled={diasBloqueados.has(dia)}>
+                                                {dia} {diasBloqueados.has(dia) ? ' (Feriado)' : ''}
+                                            </option>
+                                        ))}
+                                    </Select>
+
+                                    {selectedDay && (
+                                        <Select display={!estaBloqueadoPorPago ? 'block' : 'none' } mt={4} placeholder="Nuevo horario" onChange={(e) => setSelectedHour(e.target.value)}>
+                                            {horasFiltradas.map(hora => {
+                                                const key = `${selectedDay}-${hora}`;
+                                                const disabled = turnosLlenos.has(key);
+                                                return (
+                                                    <option key={hora} value={hora} disabled={disabled}>
+                                                        {hora} {disabled ? ' (Completo)' : ''}
+                                                    </option>
+                                                );
+                                            })}
+                                        </Select>
+                                    )}
+                                </>
+                            )}
+                        </ModalBody>
+
+                        <ModalFooter>
+                            <Flex
+                                wrap="wrap"
+                                justifyContent="center"
+                                alignItems="center"
+                                rowGap={3}
+                                >
+                                <Button mr={3} onClick={onClose}>Cancelar</Button>
+
+                                {!esTurnoTemporal && (
+                                    <Button
+                                        display={!estaBloqueadoPorPago ? 'block' : 'none'}
+                                        textAlign='center'
+                                        mr={3}
+                                        colorScheme="teal"
+                                        onClick={handleSave}
+                                        isLoading={loading}
+                                        >
+                                            {loading ? <Spinner size="sm" /> : 'Guardar Cambio'}
+                                        </Button>
+                                )}
+
+                                {!esTurnoTemporal && (
+                                    <Flex
+                                        justifyContent='center'
+                                        alignItems='center'
+                                        wrap='wrap'
+                                        w='90%'
+                                        columnGap={2}
+                                        rowGap={2}
+                                        >
+                                        <Button 
+                                            colorScheme="red" 
+                                            variant="outline" 
+                                            onClick={handleCancelarSinRecuperar} 
+                                            isLoading={loading}
+                                            >
+                                            {loading ? <Spinner size="sm" /> : 'Cancelar sin recuperar'}
+                                        </Button>
+
+                                        <Button 
+                                            colorScheme="blue" 
+                                            variant="outline" 
+                                            onClick={handleCancelarYGuardar} 
+                                            isLoading={loading}
+                                            >
+                                            {loading ? <Spinner size="sm" /> : 'Guardar para recuperar'}
+                                        </Button>
+                                    </Flex>
+
+                                )}
+
+                                {esTurnoTemporal && (
+                                    <Button
+                                        variant="solid"
+                                        colorScheme="red"
+                                        onClick={handleCancelarCambioTemporal}
+                                        isLoading={loading}
+                                    >
+                                        {loading ? <Spinner size="sm" /> : 'Volver a horarios originales'}
+                                    </Button>
+                                )}
+                            </Flex>
+                        </ModalFooter>
+                    </ModalContent>
+                )
+            }
         </Modal>
     );
 }

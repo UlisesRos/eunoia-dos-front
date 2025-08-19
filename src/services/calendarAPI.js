@@ -81,9 +81,21 @@ export const listarTodosLosTurnosRecuperadosUsados = async (startDate, endDate) 
     return response.data;
 };
 
-
 export const limpiarTurnosRecuperadosViejos = async () => {
     const res = await axios.post(`${API_URL}/limpiar-turnos-recuperados-viejos`, {}, getAuthHeaders());
+    return res.data;
+};
+
+export const adminEliminarTurnoRecuperado = async (userFullName, day, hour) => {
+    const res = await axios.post(`${API_URL}/admin-eliminar-turno-recuperado`, { userFullName, day, hour }, getAuthHeaders());
+    return res.data;
+};
+
+export const usuarioEliminarTurnoRecuperado = async (day, hour) => {
+    const res = await axios.post(`${API_URL}/usuario-eliminar-turno-recuperado`, { day, hour }, getAuthHeaders());
+    setTimeout(() => {
+        window.location.reload();
+    }, 1000); 
     return res.data;
 };
 
