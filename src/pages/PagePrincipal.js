@@ -1,4 +1,4 @@
-import { Box, Image, Flex, Heading, Button } from "@chakra-ui/react"
+import { Box, Image, Flex, Heading, Button, Text } from "@chakra-ui/react"
 import { useNavigate } from "react-router-dom";
 import logo from '../img/logos/faviconE.png';
 
