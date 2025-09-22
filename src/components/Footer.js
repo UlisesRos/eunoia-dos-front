@@ -12,10 +12,9 @@ const Footer = () => {
                 <Text
                     fontFamily="'Dancing Script', cursive"
                     fontSize='2xl'
-                    mb='20px'
                     maxW='90%'
                     >
-                    Eunoia. <br />Palabra griega que significa claridad mental y pensamiento positivo.
+                    Profe Juan Pablo <br /> Eunoia. <br />Palabra griega que significa claridad mental y pensamiento positivo.
                 </Text>
 
                 <div class="card">
