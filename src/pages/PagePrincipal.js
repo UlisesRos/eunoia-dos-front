@@ -35,8 +35,15 @@ function PagePrincipal() {
                         fontSize={['40px', '50px', '60px']}
                         letterSpacing='7px'
                         >
-                        ESTUDIO EUNOIA CON EL PROFE JUAN PABLO
+                        ESTUDIO EUNOIA
                     </Heading>
+                    <Text
+                        color='brand.secondary'
+                        textAlign='center'
+                        fontFamily="'Playfair Display', serif"
+                        fontSize={['20px', '25px', '30px']}
+                        >
+                        Con el profe. Juan Pablo</Text>
                 </Flex>
 
                 <Flex
