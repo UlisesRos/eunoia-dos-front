@@ -10,7 +10,7 @@ Esta es una aplicación web diseñada para que los usuarios puedan **registrarse
 - ✅ Cada usuario tiene una cantidad de días semanales asignados (`diasSemanales`).
 - ✅ Visualización del **calendario semanal** con días de lunes a viernes y horarios por turno.
 - ✅ Modal para seleccionar horarios con:
-  - Cupo limitado por turno (7 personas máximo).
+  - Cupo limitado por turno (4 personas máximo).
   - Restricción: **solo un horario por día**.
   - Límite de **2 cambios por mes** para modificar los horarios.
 - ✅ Panel responsive optimizado para **móvil y escritorio**.
@@ -54,5 +54,5 @@ La app está completamente adaptada a dispositivos móviles:
 - Cada usuario puede elegir hasta su `diasSemanales`.
 - No se puede seleccionar más de un horario en el mismo día.
 - Máximo 2 cambios por mes, controlados automáticamente.
-- Cada horario permite hasta 7 personas.
+- Cada horario permite hasta 4 personas.
 """
