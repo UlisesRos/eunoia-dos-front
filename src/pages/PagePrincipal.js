@@ -32,10 +32,10 @@ function PagePrincipal() {
                         color='brand.secondary'
                         textAlign='center'
                         fontFamily="'Playfair Display', serif"
-                        fontSize={['50px', '60px', '70px']}
+                        fontSize={['40px', '50px', '60px']}
                         letterSpacing='7px'
                         >
-                        ESTUDIO EUNOIA
+                        ESTUDIO EUNOIA CON EL PROFE JUAN PABLO
                     </Heading>
                 </Flex>
 
