@@ -32,7 +32,7 @@ export default function RecuperarTurnoModal({
     const turnosLlenos = new Set(
         turnosOcupados
         .filter(t =>
-            t.users.length >= 7 &&
+            t.users.length >= 4 &&
             !t.users.some(u => u.nombre === nombreUsuario)
         )
         .map(t => `${t.day}-${t.hour}`)

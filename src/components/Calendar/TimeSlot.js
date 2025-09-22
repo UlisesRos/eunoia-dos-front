@@ -3,7 +3,7 @@ import { useAuth } from '../../context/AuthContext';
 
 
 const TimeSlot = ({ hora, usersInSlot = [], currentUser, onNombreClick, dia }) => {
-    const cantidadMaxima = 7;
+    const cantidadMaxima = 4;
     const lugares = [...usersInSlot.slice(0, cantidadMaxima)];
 
     const { user: authUser } = useAuth();

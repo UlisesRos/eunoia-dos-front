@@ -10,11 +10,8 @@ import { useAuth } from '../../context/AuthContext';
 
 const diasDisponibles = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes'];
 const horasDisponibles = {
-    'Lunes': ['08:00', '09:00', '10:00', '16:00', '17:00', '18:00', '19:00', '20:00'],
-    'Martes': ['07:00', '08:00', '09:00', '10:00', '16:00', '17:00', '18:00', '19:00', '20:00'],
-    'Miércoles': ['07:00', '08:00', '09:00', '17:00', '18:00', '19:00', '20:00'],
-    'Jueves': ['07:00', '08:00', '09:00', '10:00', '16:00', '17:00', '18:00', '19:00', '20:00'],
-    'Viernes': ['08:00', '09:00', '10:00', '17:00', '18:00', '19:00']
+    'Lunes': ['17:00', '18:00', '19:00', '20:00'],
+    'Miércoles': ['17:00', '18:00', '19:00', '20:00'],
 };
 
 export default function EditSingleTurnModal({
@@ -112,7 +109,7 @@ export default function EditSingleTurnModal({
 
     const turnosLlenos = new Set(
         turnosOcupados
-            .filter(t => t.users.length >= 7 && !t.users.some(u => u.nombre === nombreC))
+            .filter(t => t.users.length >= 4 && !t.users.some(u => u.nombre === nombreC))
             .map(t => `${t.day}-${t.hour}`)
     );
 

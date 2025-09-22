@@ -38,14 +38,6 @@ const SidebarMenu = () => {
                     Registrarse
                 </Button>
             </VStack>
-            
-            <Button
-                as='a'
-                href='https://cadillac-three.vercel.app/'
-                mb={5}
-                >
-                Pilates Cadillac
-            </Button>
         </Flex>
     );
 
