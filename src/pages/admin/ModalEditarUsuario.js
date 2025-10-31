@@ -103,6 +103,7 @@ const ModalEditarUsuario = ({ isOpen, onClose, user, onUsuarioActualizado }) => 
                     >
                         <option value="1">1 día</option>
                         <option value="2">2 días</option>
+                        <option value="2">3 días</option>
                     </Select>
                 </FormControl>
             </ModalBody>
