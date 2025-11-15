@@ -145,7 +145,7 @@ const Register = () => {
                             <Select name="diasSemanales" placeholder="Seleccionar..." border='1px solid #6A8677' onChange={handleChange}>
                             <option value="1">1 vez por semana</option>
                             <option value="2">2 veces por semana</option>
-                            <option value="2">3 veces por semana</option>
+                            <option value="3">3 veces por semana</option>
                             </Select>
                         </FormControl>
 
