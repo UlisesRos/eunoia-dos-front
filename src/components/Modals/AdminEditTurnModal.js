@@ -10,8 +10,8 @@ const API_URL = `${backendUrl}/api/calendar`;
 
 const diasDisponibles = ['Lunes', 'Miércoles', 'Viernes'];
 const horasDisponibles = {
-    'Lunes': ['17:00', '18:00', '19:00', '20:00'],
-    'Miércoles': ['17:00', '18:00', '19:00', '20:00'],
+    'Lunes': ['18:00', '19:00', '20:00'],
+    'Miércoles': ['18:00', '19:00', '20:00'],
     'Viernes': ['17:00', '18:00', '19:00'],
 };
 
