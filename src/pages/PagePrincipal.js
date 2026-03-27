@@ -43,7 +43,7 @@ function PagePrincipal() {
                         fontFamily="'Playfair Display', serif"
                         fontSize={['20px', '25px', '30px']}
                         >
-                        Con el profe. Juan Pablo</Text>
+                        Con el profe. Facundo</Text>
                 </Flex>
 
                 <Flex
