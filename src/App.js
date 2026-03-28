@@ -10,7 +10,6 @@ import AccessDenied from './pages/AccessDenied';
 import ForgotPasswordForm from '../src/components/ForgotPasswordForm';
 import ResetPasswordFrom from '../src/components/ResetPasswordFrom';
 import UserPerfil from './pages/UserPerfil';
-import PagePrincipal from './pages/PagePrincipal';
 
 function App() {
   return (
