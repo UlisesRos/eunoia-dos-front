@@ -1,26 +1,223 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&family=Open+Sans:wght@400;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Questrial&display=swap');
+@import '@fontsource/playfair-display/400.css';
+@import '@fontsource/playfair-display/500.css';
+@import '@fontsource/playfair-display/700.css';
 
-/*.************ RESET ************.*/
+/* ============================================
+   RESET
+   ============================================ */
 *, *::after, *::before {
   box-sizing: border-box;
   padding: 0;
   margin: 0;
-  font-family: "Roboto", sans-serif;
-  font-weight: 500;
-  font-style: normal;
 }
 
 body {
-  margin: 0;
-  font-family: "Roboto", sans-serif;
-  font-weight: 500;
+  font-family: 'Questrial', sans-serif;
+  font-weight: 400;
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: #6A8677;
 }
 
-code {
-  font-family: "Roboto", sans-serif;
-  font-weight: 500;
-  font-style: normal;
+/* ============================================
+   ANIMACIONES GLOBALES
+   ============================================ */
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-32px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(32px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-8px); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 8px rgba(106, 134, 119, 0.4); }
+  50%       { box-shadow: 0 0 20px rgba(106, 134, 119, 0.8); }
+}
+
+/* ============================================
+   CLASES DE UTILIDAD PARA ANIMACIONES
+   ============================================ */
+
+.anim-fadeInUp {
+  animation: fadeInUp 0.6s ease both;
+}
+.anim-fadeInUp-delay-1 {
+  animation: fadeInUp 0.6s ease 0.1s both;
+}
+.anim-fadeInUp-delay-2 {
+  animation: fadeInUp 0.6s ease 0.2s both;
+}
+.anim-fadeInUp-delay-3 {
+  animation: fadeInUp 0.6s ease 0.3s both;
+}
+.anim-fadeInUp-delay-4 {
+  animation: fadeInUp 0.6s ease 0.45s both;
+}
+
+.anim-fadeInDown {
+  animation: fadeInDown 0.6s ease both;
+}
+
+.anim-fadeIn {
+  animation: fadeIn 0.8s ease both;
+}
+
+.anim-scaleIn {
+  animation: scaleIn 0.5s ease both;
+}
+
+.anim-slideInLeft {
+  animation: slideInLeft 0.6s ease both;
+}
+
+.anim-slideInRight {
+  animation: slideInRight 0.6s ease both;
+}
+
+.anim-float {
+  animation: float 3.5s ease-in-out infinite;
+}
+
+.anim-pulse-glow {
+  animation: pulse-glow 2.5s ease-in-out infinite;
+}
+
+/* ============================================
+   ESTILOS GLOBALES DE FORMULARIO
+   ============================================ */
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 1000px #f8f5f0 inset !important;
+  -webkit-text-fill-color: #2d4a3e !important;
+  transition: background-color 9999s ease-in-out 0s;
+}
+
+/* ============================================
+   SCROLLBAR PERSONALIZADO
+   ============================================ */
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(106, 134, 119, 0.1);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(106, 134, 119, 0.5);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(106, 134, 119, 0.8);
+}
+
+/* ============================================
+   FOOTER CARD (social links)
+   ============================================ */
+
+.card {
+  width: 190px;
+  height: 50px;
+  border-radius: 30px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding: 0 20px;
+  margin: 10px 0;
+  transition: all 0.3s ease;
+}
+
+.card:hover {
+  background: rgba(255, 255, 255, 0.18);
+  transform: translateY(-2px);
+}
+
+.social-link1,
+.social-link4 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+  opacity: 0.85;
+}
+
+.social-link1:hover,
+.social-link4:hover {
+  opacity: 1;
+  transform: scale(1.15);
 }

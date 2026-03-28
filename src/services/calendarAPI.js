@@ -52,9 +52,6 @@ export const quitarFeriado = async (date) => {
 
 export const guardarTurnoParaRecuperar = async (day, hour) => {
     const res = await axios.post(`${API_URL}/guardar-para-recuperar`, { day, hour }, getAuthHeaders());
-    setTimeout(() => {
-        window.location.reload();
-    }, 1000); 
     return res.data;
 };
 
@@ -93,16 +90,48 @@ export const adminEliminarTurnoRecuperado = async (userFullName, day, hour) => {
 
 export const usuarioEliminarTurnoRecuperado = async (day, hour) => {
     const res = await axios.post(`${API_URL}/usuario-eliminar-turno-recuperado`, { day, hour }, getAuthHeaders());
-    setTimeout(() => {
-        window.location.reload();
-    }, 1000); 
     return res.data;
 };
 
 export const setOriginalSelections = async (selections) => {
-    setTimeout(() => {
-        window.location.reload();
-    }, 1000); 
-    return await axios.post(`${API_URL}/set-original-selections`, { selections }, getAuthHeaders());
+    const res = await axios.post(`${API_URL}/set-original-selections`, { selections }, getAuthHeaders());
+    return res.data;
+};
+
+// ─── SCHEDULE CONFIG ──────────────────────────────────────────────────────────
+
+export const getSchedule = async () => {
+    const res = await axios.get(`${API_URL}/schedule`, getAuthHeaders());
+    return res.data; // { lunes: [...], martes: [...], ... }
+};
+
+export const addHourToSchedule = async (day, hour) => {
+    const res = await axios.post(`${API_URL}/schedule/add-hour`, { day, hour }, getAuthHeaders());
+    return res.data;
+};
+
+export const removeHourFromSchedule = async (day, hour) => {
+    const res = await axios.post(`${API_URL}/schedule/remove-hour`, { day, hour }, getAuthHeaders());
+    return res.data;
+};
+
+// ─── CLOSED SLOTS ─────────────────────────────────────────────────────────────
+
+export const getClosedSlots = async (startDate, endDate) => {
+    const res = await axios.get(`${API_URL}/closed-slots`, {
+        ...getAuthHeaders(),
+        params: { startDate, endDate }
+    });
+    return res.data; // [{ date, hour }, ...]
+};
+
+export const cerrarHorario = async (date, hour) => {
+    const res = await axios.post(`${API_URL}/closed-slot`, { date, hour }, getAuthHeaders());
+    return res.data;
+};
+
+export const abrirHorario = async (date, hour) => {
+    const res = await axios.post(`${API_URL}/open-slot`, { date, hour }, getAuthHeaders());
+    return res.data;
 };
 

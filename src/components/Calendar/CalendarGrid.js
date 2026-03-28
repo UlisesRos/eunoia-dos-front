@@ -1,14 +1,25 @@
 import { Grid, Box } from '@chakra-ui/react';
 import DayColumn from './DayColumn';
 
-const CalendarGrid = ({ weekDates, turnos, onNombreClick, feriados = [], onMarcarFeriado, onQuitarFeriado }) => {
+const CalendarGrid = ({
+    weekDates,
+    turnos,
+    onNombreClick,
+    feriados = [],
+    onMarcarFeriado,
+    onQuitarFeriado,
+    searchQuery = '',
+    schedule = {},
+    closedSlots = [],
+    onToggleClosed
+}) => {
     return (
         <Box overflowX="auto">
             <Grid
                 templateColumns={{ base: '1fr', md: 'repeat(5, 1fr)' }}
                 gap={4}
-                minW={{ base: '100%', md: '768px' }} // asegura el layout correcto en desktop
-                px={2} // un poco de padding horizontal
+                minW={{ base: '100%', md: '768px' }}
+                px={2}
             >
                 {weekDates.map(({ dayName, date }, index) => (
                     <DayColumn
@@ -20,12 +31,15 @@ const CalendarGrid = ({ weekDates, turnos, onNombreClick, feriados = [], onMarca
                         feriados={feriados}
                         onMarcarFeriado={onMarcarFeriado}
                         onQuitarFeriado={onQuitarFeriado}
-                    />                
+                        searchQuery={searchQuery}
+                        schedule={schedule}
+                        closedSlots={closedSlots}
+                        onToggleClosed={onToggleClosed}
+                    />
                 ))}
-            </Grid> 
+            </Grid>
         </Box>
     );
 };
 
 export default CalendarGrid;
-
