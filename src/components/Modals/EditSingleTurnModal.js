@@ -239,8 +239,8 @@ export default function EditSingleTurnModal({
                     <ModalHeader textAlign="center">Turno recuperado</ModalHeader>
                     <ModalCloseButton />
                     <ModalBody textAlign="center">
-                        <Box bg="yellow.50" border="1px solid" borderColor="yellow.300" borderRadius="md" p={3}>
-                            <Text fontSize="sm" color="yellow.800">
+                        <Box bg="blue.50" border="1px solid" borderColor="blue.300" borderRadius="md" p={3}>
+                            <Text fontSize="sm" color="blue.800">
                                 Este es un turno que recuperaste de una semana anterior.
                                 Si lo eliminás, volverá a estar pendiente y podrás elegir otra fecha.
                             </Text>

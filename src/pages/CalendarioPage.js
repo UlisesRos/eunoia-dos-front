@@ -57,6 +57,36 @@ const CalendarioPage = () => {
     const navigate = useNavigate();
     const toast = useToast();
 
+    const fetchAllTurnos = async () => {
+        if (!weekDates || weekDates.length === 0) return;
+        try {
+            const [turnosNormales, turnosRecuperados] = await Promise.all([
+                getTurnosPorHorario(),
+                listarTodosLosTurnosRecuperadosUsados(
+                    weekDates[0].date,
+                    weekDates[weekDates.length - 1].date
+                )
+            ]);
+            const turnosCombinados = [...turnosNormales];
+            for (let rec of turnosRecuperados) {
+                const existente = turnosCombinados.find(
+                    t => t.day === rec.day && t.hour === rec.hour
+                );
+                if (existente) {
+                    existente.users.push({ nombre: rec.nombre, tipo: rec.tipo });
+                } else {
+                    turnosCombinados.push({
+                        day: rec.day, hour: rec.hour,
+                        users: [{ nombre: rec.nombre, tipo: rec.tipo }]
+                    });
+                }
+            }
+            setTurnos(turnosCombinados);
+        } catch (err) {
+            console.error('Error al cargar turnos combinados:', err);
+        }
+    };
+
     useEffect(() => {
         getFeriados()
             .then(setFeriados)
@@ -146,38 +176,7 @@ const CalendarioPage = () => {
     }, [user]);
 
     useEffect(() => {
-        if (!weekDates || weekDates.length === 0) return;
-        const fetchTurnos = async () => {
-            try {
-                const [turnosNormales, turnosRecuperados] = await Promise.all([
-                    getTurnosPorHorario(),
-                    listarTodosLosTurnosRecuperadosUsados(
-                        weekDates[0].date,
-                        weekDates[weekDates.length - 1].date
-                    )
-                ]);
-
-                const turnosCombinados = [...turnosNormales];
-                for (let rec of turnosRecuperados) {
-                    const existente = turnosCombinados.find(
-                        t => t.day === rec.day && t.hour === rec.hour
-                    );
-                    if (existente) {
-                        existente.users.push({ nombre: rec.nombre, tipo: rec.tipo });
-                    } else {
-                        turnosCombinados.push({
-                            day: rec.day,
-                            hour: rec.hour,
-                            users: [{ nombre: rec.nombre, tipo: rec.tipo }]
-                        });
-                    }
-                }
-                setTurnos(turnosCombinados);
-            } catch (err) {
-                console.error('Error al cargar turnos combinados:', err);
-            }
-        };
-        fetchTurnos();
+        fetchAllTurnos();
     }, [weekDates]);
 
     const estaBloqueadoPorPago = (user) => {
@@ -518,7 +517,7 @@ const CalendarioPage = () => {
                         {[
                             { label: 'Turno fijo', scheme: 'green' },
                             { label: 'Turno cambiado', scheme: 'red' },
-                            { label: 'Turno recuperado', scheme: 'yellow' },
+                            { label: 'Turno recuperado', scheme: 'blue' },
                             { label: 'Libre', scheme: 'gray' },
                         ].map(({ label, scheme }) => (
                             <Tag key={label} size="sm" colorScheme={scheme} color="black" fontWeight="600" borderRadius="full">
@@ -564,7 +563,7 @@ const CalendarioPage = () => {
                         setUserSelectionsState(data.selections || []);
                         setCambiosRestantes(2 - (data.changesThisMonth || 0));
                     });
-                    getTurnosPorHorario().then(setTurnos);
+                    fetchAllTurnos();
                 }}
             />
 
@@ -582,7 +581,7 @@ const CalendarioPage = () => {
                         setUserSelectionsState(data.selections || []);
                         setCambiosRestantes(2 - (data.changesThisMonth || 0));
                     });
-                    getTurnosPorHorario().then(setTurnos);
+                    fetchAllTurnos();
                 }}
             />
 
@@ -593,7 +592,7 @@ const CalendarioPage = () => {
                 horarioActual={horarioActual}
                 turnosOcupados={turnos}
                 onUpdate={() => {
-                    getTurnosPorHorario().then(setTurnos);
+                    fetchAllTurnos();
                     getUserSelections().then(data => {
                         setUserSelectionsState(data.selections || []);
                         setCambiosRestantes(2 - (data.changesThisMonth || 0));
@@ -608,7 +607,7 @@ const CalendarioPage = () => {
                 turnosOcupados={turnos}
                 nombreUsuario={`${user?.nombre} ${user?.apellido}`}
                 onUpdate={() => {
-                    getTurnosPorHorario().then(setTurnos);
+                    fetchAllTurnos();
                     listarTurnosRecuperables().then(setTurnosRecuperables);
                     getUserSelections().then(data => {
                         setUserSelectionsState(data.selections || []);

@@ -11,9 +11,9 @@ const tipoColor = {
         color: '#c6f6d5',
     },
     recuperado: {
-        bg: 'rgba(246,173,85,0.28)',
-        border: 'rgba(246,173,85,0.65)',
-        color: '#fefcbf',
+        bg: 'rgba(99,179,237,0.28)',
+        border: 'rgba(99,179,237,0.65)',
+        color: '#bee3f8',
     },
     temporal: {
         bg: 'rgba(252,129,74,0.28)',
@@ -23,7 +23,7 @@ const tipoColor = {
 };
 
 const UserChip = ({ user, esActual, esClickeable, onClick, highlighted }) => {
-    const colors = tipoColor[user.tipo] || tipoColor.temporal;
+    const colors = tipoColor[user.tipo] || tipoColor.original;
 
     const chip = (
         <MotionBox
