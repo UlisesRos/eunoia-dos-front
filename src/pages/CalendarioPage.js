@@ -177,7 +177,7 @@ const CalendarioPage = () => {
 
     useEffect(() => {
         fetchAllTurnos();
-    }, [weekDates]);
+    }, [weekDates, fetchAllTurnos]);
 
     const estaBloqueadoPorPago = (user) => {
         const hoy = new Date();
