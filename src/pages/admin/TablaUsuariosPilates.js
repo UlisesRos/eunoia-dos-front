@@ -132,7 +132,7 @@ const TablaUsuariosPilates = () => {
                     textAlign="center"
                     mb={1}
                 >
-                    Registro de Clientes
+                    Registro de Alumnas/os
                 </Heading>
                 <Text
                     fontFamily="'Questrial', sans-serif"

@@ -99,6 +99,7 @@ const AdminInfoModal = ({ isOpen, onClose, onSuccess }) => {
                     />
                     <Textarea
                         placeholder="Descripción"
+                        color='black'
                         value={description}
                         onChange={(e) => setDescription(e.target.value)}
                     />
