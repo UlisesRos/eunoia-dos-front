@@ -569,6 +569,7 @@ const CalendarioPage = () => {
                 turnosOcupados={turnos}
                 modoOriginal={mostrarBannerAjusteOriginal}
                 esPrimerIngreso={esPrimerIngreso}
+                schedule={schedule}
                 onUpdate={() => {
                     getUserSelections().then((data) => {
                         const { selections, changesThisMonth, originalSelections = [] } = data;
@@ -591,6 +592,7 @@ const CalendarioPage = () => {
                 horarioActual={horarioActual}
                 feriados={feriados}
                 weekDates={weekDates}
+                schedule={schedule}
                 onUpdate={() => {
                     getUserSelections().then(data => {
                         setUserSelectionsState(data.selections || []);
@@ -606,6 +608,7 @@ const CalendarioPage = () => {
                 selectedUser={selectedUsuario}
                 horarioActual={horarioActual}
                 turnosOcupados={turnos}
+                schedule={schedule}
                 onUpdate={() => {
                     fetchAllTurnos();
                     getUserSelections().then(data => {
@@ -629,11 +632,12 @@ const CalendarioPage = () => {
                         setCambiosRestantes(2 - (data.changesThisMonth || 0));
                     });
                 }}
-                horasDisponiblesPorDia={{
-                    Lunes: ['18:00', '19:00', '20:00'],
-                    Miércoles: ['18:00', '19:00', '20:00'],
-                    Viernes: ['18:00', '19:00']
-                }}
+                horasDisponiblesPorDia={Object.fromEntries(
+                    Object.entries(schedule).map(([day, hours]) => [
+                        day.charAt(0).toUpperCase() + day.slice(1),
+                        hours
+                    ])
+                )}
             />
 
             {user?.rol === 'usuario' && <InfoModal />}

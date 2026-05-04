@@ -7,13 +7,6 @@ import { useState, useEffect } from 'react';
 import { CheckIcon, DeleteIcon } from '@chakra-ui/icons';
 import { setUserSelections, setOriginalSelections } from '../../services/calendarAPI';
 
-const diasDisponibles = ['Lunes', 'Miércoles', 'Viernes'];
-const horasDisponibles = {
-    'Lunes': ['18:00', '19:00', '20:00'],
-    'Miércoles': ['18:00', '19:00', '20:00'],
-    'Viernes': ['18:00', '19:00']
-};
-
 export default function SelectDaysModal({
     isOpen,
     onClose,
@@ -22,13 +15,17 @@ export default function SelectDaysModal({
     turnosOcupados = [],
     modoOriginal = false,
     esPrimerIngreso = false,
-    onUpdate
+    onUpdate,
+    schedule = {}
 }) {
     const toast = useToast();
     const [selections, setSelections] = useState([]);
     const [selectedDay, setSelectedDay] = useState('');
     const [selectedHour, setSelectedHour] = useState('');
     const [loading, setLoading] = useState(false);
+
+    const diasDisponibles = Object.keys(schedule).map(d => d.charAt(0).toUpperCase() + d.slice(1));
+    const getHorasPorDia = (day) => schedule[day.toLowerCase()] || [];
 
     useEffect(() => {
         if (isOpen) {
@@ -154,7 +151,7 @@ export default function SelectDaysModal({
     return (
         <Modal isOpen={isOpen} onClose={onClose} isCentered size="md">
             <ModalOverlay bg="blackAlpha.600" />
-            <ModalContent>
+            <ModalContent color="gray.800">
                 <ModalHeader textAlign="center" pb={1}>
                     {esPrimerIngreso
                         ? 'Elegí tus turnos semanales'
@@ -212,7 +209,7 @@ export default function SelectDaysModal({
                                 mb={2}
                                 size="sm"
                             >
-                                {(horasDisponibles[selectedDay] || []).map(h => {
+                                {getHorasPorDia(selectedDay).map(h => {
                                     const lleno = turnosLlenos.has(`${selectedDay}-${h}`);
                                     return (
                                         <option key={h} value={h} disabled={lleno}>

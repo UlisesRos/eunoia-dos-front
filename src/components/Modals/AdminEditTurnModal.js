@@ -8,13 +8,6 @@ import backendUrl from '../../config';
 
 const API_URL = `${backendUrl}/api/calendar`;
 
-const diasDisponibles = ['Lunes', 'Miércoles', 'Viernes'];
-const horasDisponibles = {
-    'Lunes': ['18:00', '19:00', '20:00'],
-    'Miércoles': ['18:00', '19:00', '20:00'],
-    'Viernes': ['18:00', '19:00']
-};
-
 export default function AdminEditTurnModal({
     isOpen,
     onClose,
@@ -22,6 +15,7 @@ export default function AdminEditTurnModal({
     horarioActual,
     onUpdate,
     turnosOcupados = [],
+    schedule = {}
 }) {
     const toast = useToast();
     const [selectedDay, setSelectedDay] = useState('');
@@ -208,7 +202,8 @@ const handleResetToOriginals = async () => {
     }
 };
 
-    const horasFiltradas = selectedDay ? horasDisponibles[selectedDay] : [];
+    const diasDisponibles = Object.keys(schedule).map(d => d.charAt(0).toUpperCase() + d.slice(1));
+    const horasFiltradas = selectedDay ? (schedule[selectedDay.toLowerCase()] || []) : [];
 
     const turnosLlenos = new Set(
         turnosOcupados

@@ -8,13 +8,6 @@ import { useState, useEffect } from 'react';
 import { setUserSelections, resetUserSelections, cancelarTurnoTemporalmente, guardarTurnoParaRecuperar, usuarioEliminarTurnoRecuperado } from '../../services/calendarAPI';
 import { useAuth } from '../../context/AuthContext';
 
-const diasDisponibles = ['Lunes', 'Miércoles', 'Viernes'];
-const horasDisponibles = {
-    'Lunes': ['18:00', '19:00', '20:00'],
-    'Miércoles': ['18:00', '19:00', '20:00'],
-    'Viernes': ['18:00', '19:00']
-};
-
 export default function EditSingleTurnModal({
     isOpen,
     onClose,
@@ -24,7 +17,8 @@ export default function EditSingleTurnModal({
     horarioActual,
     feriados = [],
     weekDates = [],
-    onUpdate
+    onUpdate,
+    schedule = {}
 }) {
     const toast = useToast();
     const [selectedDay, setSelectedDay] = useState('');
@@ -61,7 +55,8 @@ export default function EditSingleTurnModal({
             .map(t => `${t.day}-${t.hour}`)
     );
 
-    const horasFiltradas = selectedDay ? horasDisponibles[selectedDay] : [];
+    const diasDisponibles = Object.keys(schedule).map(d => d.charAt(0).toUpperCase() + d.slice(1));
+    const horasFiltradas = selectedDay ? (schedule[selectedDay.toLowerCase()] || []) : [];
 
     const handleSave = async () => {
         if (!selectedDay || !selectedHour) {

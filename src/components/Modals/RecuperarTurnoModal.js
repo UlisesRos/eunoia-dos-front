@@ -105,7 +105,7 @@ export default function RecuperarTurnoModal({
     return (
         <Modal isOpen={isOpen} onClose={onClose} isCentered size="md">
             <ModalOverlay bg="blackAlpha.600" />
-            <ModalContent>
+            <ModalContent color="gray.800">
                 <ModalHeader textAlign="center">Recuperar turno pendiente</ModalHeader>
                 <ModalCloseButton />
                 <ModalBody>
